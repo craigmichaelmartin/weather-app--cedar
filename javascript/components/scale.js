@@ -1,40 +1,41 @@
-import View from '../views/view';
-import _ from 'underscore';
+import xs from 'xstream';
+import {div, span} from '@cycle/dom';
+import isolate from '@cycle/isolate';
 
-const fs = require('fs');
-const path = require('path');
-const template = fs.readFileSync(path.join(__dirname, '/../templates/scale.html'), 'utf8');
+const intent = function(DOMSource) {
+    return DOMSource.select('.js-scale').events('click')
+        .map((ev) => ({scale: ev.target.dataset.value}));
+};
 
-class ScaleView extends View {
+const model = function(newValue$, props$) {
+    const initialValue$ = props$.map((props) => ({scale: props.initial})).take(1);
+    return xs.merge(initialValue$, newValue$).remember();
+};
 
-    get template() {
-        return _.template(template);
-    }
+const view = function(props$, state$) {
+    return xs.combine(props$, state$).map(([props, state]) =>
+        // div('.scale js-scale btn-group', {attrs: {'data-toggle': 'buttons'}}, [
+        //     label(`.btn btn-primary scale-button js-english ${if (props.scale === 'english') {'active'}`, [
+        //         input('.js-scaleInput', {attrs: {type: 'radio', autocomplete: 'off'}}
+        div('.scales', [
+            span(`.scale .js-scale ${state.scale === 'english' ? 'is-active' : ''}`, {attrs: {'data-value': 'english'}}, ['English']),
+            span(`.scale .js-scale ${state.scale === 'metric' ? 'is-active' : ''}`, {attrs: {'data-value': 'metric'}}, ['Metric'])
+        ])
+    );
+};
 
-    get events() {
-        return {
-            'click .js-english': 'englishScale',
-            'click .js-metric': 'metricScale'
-        };
-    }
+const ScaleDropdown = function(sources) {
+    const change$ = intent(sources.DOM);
+    const state$ = model(change$, sources.props$);
+    const vtree$ = view(sources.props$, state$);
+    return {
+        DOM: vtree$,
+        value: state$
+    };
+};
 
-    initialize({appState}) {
-        this.model = appState;
-        this.render();
-    }
+const IsolatedScaleDropdown = function (sources) {
+    return isolate(ScaleDropdown)(sources);
+};
 
-    englishScale() {
-        if (this.model.get('scale') === 'metric') {
-            this.model.set('scale', 'english');
-        }
-    }
-
-    metricScale() {
-        if (this.model.get('scale') === 'english') {
-            this.model.set('scale', 'metric');
-        }
-    }
-
-}
-
-export default ScaleView;
+export default IsolatedScaleDropdown;
