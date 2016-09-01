@@ -1,17 +1,20 @@
 {
-  "name": "weather-app--birch",
+  "name": "weather-app--cedar",
   "description": "A fun little project showcasing some skills",
   "version": "0.0.1",
   "author": "Craig Martin",
   "dependencies": {
+    "@cycle/dom": "^12.2.1",
+    "@cycle/http": "^11.0.0",
+    "@cycle/isolate": "^1.4.0",
+    "@cycle/xstream-run": "^3.1.0",
     "babel-polyfill": "~6.5.0",
-    "backbone": "1.2.3",
     "bootstrap": "~4.0.0-alpha.2",
     "d3": "3.5.14",
     "es5-shim": "4.5.2",
     "font-awesome": "~4.5.0",
-    "jquery": "2.2.0",
-    "underscore": "1.8.3"
+    "lodash": "^4.15.0",
+    "xstream": "^6.1.0"
   },
   "devDependencies": {
     "autoprefixer": "~6.3.3",
@@ -57,11 +60,11 @@
   },
   "scripts": {
     "demo": "npm run setup && npm run demo-server",
-    "demo-server": "http-server ../ -p 9001 -o weather-app--birch",
-    "dev-server": "http-server ../ -p 8080 -o weather-app--birch",
+    "demo-server": "http-server ../ -p 9001 -o weather-app--cedar",
+    "dev-server": "http-server ../ -p 8080 -o weather-app--cedar",
     "deployment": "git checkout gh-pages && git fetch origin master && git reset --hard origin/master && npm run setup && mkdir -p temp_node_modules/font-awesome/fonts/ && cp -r node_modules/font-awesome/fonts/ temp_node_modules/font-awesome/fonts/ && rm -rf README.md package.json .gitignore karma.conf.js node_modules/ scss/ test/ javascript/ && mkdir -p node_modules/font-awesome/fonts/ && cp -r temp_node_modules/font-awesome/fonts/ node_modules/font-awesome/fonts/ && rm -rf temp_node_modules && git add . && git commit -m 'deploy app' && git push -f origin gh-pages && git checkout master",
     "make-static-dirs": "mkdir -p css && mkdir -p compiledES6",
-    "clean-built-dirs": "rm -rf weather-app--birch && rm -rf css && rm -rf compiledES6",
+    "clean-built-dirs": "rm -rf weather-app--cedar && rm -rf css && rm -rf compiledES6",
     "watch-scss": "watch 'npm run build-scss' scss/",
     "build-scss": "node-sass scss/main.scss css/app.css && npm run autoprefixer && npm run cssmin",
     "watch-es6": "watchify -t [babelify --presets [es2015] brfs] javascript/main.js -o compiledES6/main.js -dv",
@@ -80,7 +83,6 @@
     "autoprefixer": "postcss --use autoprefixer css/app.css -o css/app.css",
     "cssmin": "cssmin css/app.css > css/app.min.css",
     "dist": "npm run clean-built-dirs && npm run make-static-dirs && npm run build",
-    "preinstall": "rm -rf node_modules",
     "setup": "npm install && npm run dist"
   },
   "browserify": {
