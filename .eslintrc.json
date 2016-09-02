@@ -9,7 +9,7 @@
         "node": true
     },
     "rules": {
-        "comma-dangle": [2, "never"],
+        "comma-dangle": [1, "never"],
         "no-cond-assign": [2, "always"],
         "no-console": 2,
         "no-constant-condition": 2,
@@ -114,7 +114,7 @@
         "no-undef": 2,
         "no-undef-init": 2,
         "no-undefined": 2,
-        "no-unused-vars": 2,
+        "no-unused-vars": 1,
         "no-use-before-define": 2,
 
         "callback-return": 2,
