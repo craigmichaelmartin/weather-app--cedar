@@ -11,15 +11,14 @@ const intent = function({HTTPSource}) {
     return HTTPSource;
     // return HTTPSource.select('day').flatten()
     //     .map((res) => {
-    //         console.log(res.body.forecast.simpleforecast.forecastday);
     //         return res.body.forecast.simpleforecast.forecastday;
     //     }).remember();
 };
 
-const model = function(day$, scale$) {
-    const combine$ = xs.combine(day$, scale$).remember()
-        .map(([days, scale]) => {
-            return {days, scale};
+const model = function(day$, scale$, whichDay$) {
+    const combine$ = xs.combine(day$, scale$, whichDay$).remember()
+        .map(([days, scale, whichDay]) => {
+            return {days, scale, whichDay};
         });
     return combine$;
 };
@@ -37,7 +36,7 @@ const dayAttributes = [
 
 const view = function(state$) {
     return state$.map((state) => {
-        const current = state.days[0]; // TODO: hardcoded
+        const current = _.find(state.days, {day: state.whichDay});
         return div('.DayDisplay', _.map(dayAttributes, (attr) => {
             return div('row', [
                 div('.col-xs-5', [
@@ -57,7 +56,7 @@ const view = function(state$) {
 // and inject whatever props are necessary to differentiate
 const DayDisplay = function(sources) {
     const change$ = intent({HTTPSource: sources.HTTP});
-    const state$ = model(change$, sources.scaleState);
+    const state$ = model(change$, sources.scaleState, sources.whichDay);
     const vtree$ = view(state$);
     return {
         DOM: vtree$

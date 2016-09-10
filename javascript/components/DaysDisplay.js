@@ -4,28 +4,45 @@ import {div, span, img} from '@cycle/dom';
 import isolate from '@cycle/isolate';
 import {getScaledTemperatureDegreeUnit} from '../util/temperature';
 
-const intent = function({HTTPSource}) {
-    return HTTPSource;
-    // return HTTPSource.select('day').flatten()
+const intent = function({HTTPSource, DOMSource}) {
+    const whichDay$ = DOMSource.select('.DaysDisplay-day').events('click')
+        .map((ev) => +ev.currentTarget.dataset.day);
+    const days$ = HTTPSource;
+    // const days$ = HTTPSource.select('day').flatten()
     //     .map((res) => {
-    //         console.log(res.body.forecast.simpleforecast.forecastday);
     //         return res.body.forecast.simpleforecast.forecastday;
     //     }).remember();
+    return {
+        whichDay: whichDay$,
+        days: days$
+    };
 };
 
-const model = function(day$, scale$) {
-    const combine$ = xs.combine(day$, scale$).remember()
-        .map(([days, scale]) => {
-            return {days, scale};
+const model = function(changeObj$, scale$, props$) {
+    const initialDay$ = props$.map((props) => props.initial.day).take(1);
+    const whichDay$ = xs.merge(initialDay$, changeObj$.whichDay).remember();
+    const combine$ = xs.combine(changeObj$.days, whichDay$, scale$).remember()
+        .map(([days, whichDay, scale]) => {
+            return {days, whichDay, scale};
         });
-    return combine$;
+    return {
+        combine: combine$,
+        whichDay: whichDay$
+    };
 };
 
 const view = function(state$) {
     return state$.map((state) => {
         return div('.DaysDisplay', _.map(state.days, (day) => {
-            return div('.col-lg-1 .col-md-2', [
-                div('.js-day .day .row', [
+            return div('.col-lg-1 .col-md-2 .DaysDisplay-day .js-day', {
+                class: {
+                    'is-active': state.whichDay === day.day
+                },
+                attrs: {
+                    'data-day': day.day
+                }
+            }, [
+                div('.day .row', [
                     div('.col-md-10 .col-xs-3', [
                         div('.day-label', day.weekdayShort)
                     ]),
@@ -51,11 +68,12 @@ const view = function(state$) {
 // TODO: probably make a generic display between this and hour display
 // and inject whatever props are necessary to differentiate
 const DaysDisplay = function(sources) {
-    const change$ = intent({HTTPSource: sources.HTTP});
-    const state$ = model(change$, sources.scaleState);
-    const vtree$ = view(state$);
+    const changeObj$ = intent({HTTPSource: sources.HTTP, DOMSource: sources.DOM});
+    const stateObj$ = model(changeObj$, sources.scaleState, sources.props);
+    const vtree$ = view(stateObj$.combine);
     return {
-        DOM: vtree$
+        DOM: vtree$,
+        whichDay: stateObj$.whichDay
     };
 };
 

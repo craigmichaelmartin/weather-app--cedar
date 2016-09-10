@@ -28,6 +28,8 @@ const intent = function(DOMSource) {
 };
 
 const model = function(obj$, props$) {
+    // Could I just use startWith and pass the value, instead of creating a
+    // one value stream to pass in, mapping it, and taking the single value?
     const initialZipTyping$ = props$.map((props) => props.initial.zip).take(1);
     const initialZipLegit$ = props$.map((props) => props.initial.zip).take(1); // unclear why I can not reuse initialZipTyping$
     const initialMode$ = props$.map((props) => props.initial.editMode).take(1);
