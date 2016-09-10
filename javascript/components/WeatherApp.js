@@ -6,6 +6,7 @@ import ScaleDropdown from './Scale';
 import LocationInput from './Location';
 import HourDisplay from './HourDisplay';
 import DayDisplay from './DayDisplay';
+import DaysDisplay from './DaysDisplay';
 
 const model = function(scaleDropdownValue$, locationInputObj$, dayWeather$, hourWeather$) {
     return xs.combine(scaleDropdownValue$, locationInputObj$.combine, dayWeather$, hourWeather$)
@@ -14,9 +15,9 @@ const model = function(scaleDropdownValue$, locationInputObj$, dayWeather$, hour
         });
 };
 
-const view = function(state$, scaleDropdownDOM, locationInputDOM, hourDisplayDOM, dayDisplayDOM) {
-    return xs.combine(state$, scaleDropdownDOM, locationInputDOM, hourDisplayDOM, dayDisplayDOM)
-        .map(([state, scaleVTree, locationVTree, hourVTree, dayVTree]) => {
+const view = function(state$, scaleDropdownDOM, locationInputDOM, hourDisplayDOM, dayDisplayDOM, daysDisplayDOM) {
+    return xs.combine(state$, scaleDropdownDOM, locationInputDOM, hourDisplayDOM, dayDisplayDOM, daysDisplayDOM)
+        .map(([state, scaleVTree, locationVTree, hourVTree, dayVTree, daysVTree]) => {
             return div([
                 scaleVTree,
                 h2(`Scale is ${state.scaleState.scale}`),
@@ -24,7 +25,8 @@ const view = function(state$, scaleDropdownDOM, locationInputDOM, hourDisplayDOM
                 h2(`Zip is ${state.locationStateCombine.zipTyping}`),
                 h2(`ValidZip is ${state.locationStateCombine.validZip}`),
                 hourVTree,
-                dayVTree
+                dayVTree,
+                daysVTree
             ]);
         });
 };
@@ -123,8 +125,9 @@ const WeatherApp = function WeatherApp({DOM, HTTP}) {
         }).remember();
     const hourDisplay = HourDisplay({HTTP: hourWeather$, scaleState: scaleDropdown.value});
     const dayDisplay = DayDisplay({HTTP: dayWeather$, scaleState: scaleDropdown.value});
+    const daysDisplay = DaysDisplay({HTTP: dayWeather$, scaleState: scaleDropdown.value});
     const state$ = model(scaleDropdown.value, locationInput.stateObj, dayWeather$, hourWeather$);
-    const vtree$ = view(state$, scaleDropdown.DOM, locationInput.DOM, hourDisplay.DOM, dayDisplay.DOM);
+    const vtree$ = view(state$, scaleDropdown.DOM, locationInput.DOM, hourDisplay.DOM, dayDisplay.DOM, daysDisplay.DOM);
     return {
         DOM: vtree$,
         HTTP: getWeather$
