@@ -11,15 +11,14 @@ const intent = function({HTTPSource}) {
     return HTTPSource;
     // return HTTPSource.select('hour').flatten()
     //     .map((res) => {
-    //         console.log(res.body.hourly_forecast);
     //         return res.body.hourly_forecast;
     //     }).remember();
 };
 
-const model = function(hour$, scale$) {
-    const combine$ = xs.combine(hour$, scale$).remember()
-        .map(([hours, scale]) => {
-            return {hours, scale};
+const model = function(hour$, scale$, whichHour$) {
+    const combine$ = xs.combine(hour$, scale$, whichHour$).remember()
+        .map(([hours, scale, whichHour]) => {
+            return {hours, scale, whichHour};
         });
     return combine$;
 };
@@ -38,7 +37,7 @@ const hourAttributes = [
 
 const view = function(state$) {
     return state$.map((state) => {
-        const current = state.hours[0]; // TODO: hardcoded
+        const current = _.find(state.hours, {hour: state.whichHour});
         return div('.HourDisplay', _.map(hourAttributes, (attr) => {
             return div('row', [
                 div('.col-xs-5', [
@@ -58,7 +57,7 @@ const view = function(state$) {
 // and inject whatever props are necessary to differentiate
 const HourDisplay = function(sources) {
     const change$ = intent({HTTPSource: sources.HTTP});
-    const state$ = model(change$, sources.scaleState);
+    const state$ = model(change$, sources.scaleState, sources.whichHour);
     const vtree$ = view(state$);
     return {
         DOM: vtree$

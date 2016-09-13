@@ -7,6 +7,7 @@ import LocationInput from './Location';
 import HourDisplay from './HourDisplay';
 import DayDisplay from './DayDisplay';
 import DaysDisplay from './DaysDisplay';
+import HoursDisplay from './HoursDisplay';
 
 const model = function(scaleDropdownValue$, locationInputObj$, dayWeather$, hourWeather$) {
     return xs.combine(scaleDropdownValue$, locationInputObj$.combine, dayWeather$, hourWeather$)
@@ -15,9 +16,9 @@ const model = function(scaleDropdownValue$, locationInputObj$, dayWeather$, hour
         });
 };
 
-const view = function(state$, scaleDropdownDOM, locationInputDOM, hourDisplayDOM, dayDisplayDOM, daysDisplayDOM) {
-    return xs.combine(state$, scaleDropdownDOM, locationInputDOM, hourDisplayDOM, dayDisplayDOM, daysDisplayDOM)
-        .map(([state, scaleVTree, locationVTree, hourVTree, dayVTree, daysVTree]) => {
+const view = function(state$, scaleDropdownDOM, locationInputDOM, hourDisplayDOM, dayDisplayDOM, daysDisplayDOM, hoursDisplayDom) {
+    return xs.combine(state$, scaleDropdownDOM, locationInputDOM, hourDisplayDOM, dayDisplayDOM, daysDisplayDOM, hoursDisplayDom)
+        .map(([state, scaleVTree, locationVTree, hourVTree, dayVTree, daysVTree, hoursVTree]) => {
             return div([
                 div('.container-fluid', [
                     div('.row', [
@@ -35,6 +36,7 @@ const view = function(state$, scaleDropdownDOM, locationInputDOM, hourDisplayDOM
                             dayVTree
                         ]),
                         div('.col-md-7 .col-md-pull-3', [
+                            hoursVTree,
                             div('CHART')
                         ])
                     ])
@@ -108,6 +110,12 @@ const WeatherApp = function WeatherApp({DOM, HTTP}) {
             day: new Date().getDate()
         }
     });
+    const currentHour = new Date().getHours() + 1;
+    const hoursDisplayProps$ = xs.of({
+        initial: {
+            hour: currentHour > 23 ? 0 : currentHour
+        }
+    });
     const scaleDropdown = ScaleDropdown({DOM, props$: scaleProps$});
     const locationInput = LocationInput({DOM, props$: locationProps$});
     const getDayWeather$ = locationInput.stateObj.zipLegit.map((zip) => {
@@ -140,11 +148,37 @@ const WeatherApp = function WeatherApp({DOM, HTTP}) {
         .map((res) => {
             return _.map(res.body.hourly_forecast, parseHours);
         }).remember();
-    const daysDisplay = DaysDisplay({HTTP: dayWeather$, DOM, scaleState: scaleDropdown.value, props: daysDisplayProps$});
-    const hourDisplay = HourDisplay({HTTP: hourWeather$, scaleState: scaleDropdown.value});
-    const dayDisplay = DayDisplay({HTTP: dayWeather$, scaleState: scaleDropdown.value, whichDay: daysDisplay.whichDay});
-    const state$ = model(scaleDropdown.value, locationInput.stateObj, dayWeather$, hourWeather$);
-    const vtree$ = view(state$, scaleDropdown.DOM, locationInput.DOM, hourDisplay.DOM, dayDisplay.DOM, daysDisplay.DOM);
+    const daysDisplay = DaysDisplay({
+        HTTP: dayWeather$,
+        DOM,
+        scaleState: scaleDropdown.value,
+        props: daysDisplayProps$
+    });
+    const hoursDisplay = HoursDisplay({
+        HTTP: hourWeather$,
+        DOM,
+        scaleState: scaleDropdown.value,
+        props: hoursDisplayProps$,
+        whichDay: daysDisplay.whichDay
+    });
+    const hourDisplay = HourDisplay({
+        HTTP: hourWeather$,
+        scaleState: scaleDropdown.value,
+        whichHour: hoursDisplay.whichHour
+    });
+    const dayDisplay = DayDisplay({
+        HTTP: dayWeather$,
+        scaleState: scaleDropdown.value,
+        whichDay: daysDisplay.whichDay
+    });
+    const state$ = model(
+        scaleDropdown.value, locationInput.stateObj, dayWeather$,
+        hourWeather$
+    );
+    const vtree$ = view(
+        state$, scaleDropdown.DOM, locationInput.DOM, hourDisplay.DOM,
+        dayDisplay.DOM, daysDisplay.DOM, hoursDisplay.DOM
+    );
     return {
         DOM: vtree$,
         HTTP: getWeather$
