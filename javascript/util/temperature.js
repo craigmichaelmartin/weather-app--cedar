@@ -10,7 +10,7 @@ const getScaledTemperature = function (scale, englishNumber, {toFixed = 0} = {})
 
 const getScaledTemperatureDegree = function (scale, englishNumber, options) {
     const temperature = getScaledTemperature(scale, englishNumber, options);
-    return `${temperature}&deg;`;
+    return `${temperature}°`;
 };
 
 const getScaledTemperatureDegreeUnit = function (scale, englishNumber, options) {
