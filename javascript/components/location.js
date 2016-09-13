@@ -13,6 +13,8 @@ const intent = function(DOMSource) {
         .map(() => false);
     const editIconClick$ = DOMSource.select('.js-locationEditIcon').events('click')
         .map(() => true);
+    const mapIconClick$ = DOMSource.select('.js-locationMarkerIcon').events('click')
+        .map(() => true);
     const cancelIconClick$ = DOMSource.select('.js-locationCancelIcon').events('click')
         .map(() => false);
     const zipFiveLetters$ = DOMSource.select('.js-locationInput').events('keyup')
@@ -22,6 +24,7 @@ const intent = function(DOMSource) {
         displayClick: displayClick$,
         inputBlur: inputBlur$,
         editIconClick: editIconClick$,
+        mapIconClick: mapIconClick$,
         cancelIconClick: cancelIconClick$,
         zipFiveLetters: zipFiveLetters$
     };
@@ -37,8 +40,8 @@ const model = function(obj$, props$) {
     const zipTyping$ = xs.merge(initialZipTyping$, obj$.zipTyping).remember();
     const zipLegit$ = xs.merge(initialZipLegit$, validZip$).remember();
     const editMode$ = xs.merge(
-        initialMode$, obj$.displayClick, obj$.inputBlur,
-        obj$.editIconClick, obj$.cancelIconClick, obj$.zipFiveLetters
+        initialMode$, obj$.displayClick, obj$.inputBlur, obj$.editIconClick,
+        obj$.mapIconClick, obj$.cancelIconClick, obj$.zipFiveLetters
     ).remember();
     const combine$ = xs.combine(zipTyping$, zipLegit$, editMode$).remember()
         .map(([zipTyping, validZip, editMode]) => {
@@ -54,9 +57,9 @@ const model = function(obj$, props$) {
 
 const view = function(state$) {
     return state$.map((state) => {
-        return div('.js-locationContainer', [
-            div('.edit-mode', {style: {display: state.editMode ? 'block' : 'none'}}, [
-                input('.js-locationInput', {
+        return div('.js-locationContainer Location', [
+            div('.Location--editMode', {style: {display: state.editMode ? 'block' : 'none'}}, [
+                input('.js-locationInput .form-group .form-control .Location-edit', {
                     attrs: _.omit({
                         value: state.zipTyping,
                         autofocus: true,
@@ -68,11 +71,12 @@ const view = function(state$) {
                         'is-invalid': !isValidZip(state.zipTyping)
                     }
                 }),
-                span('.js-locationCancelIcon', '(x)')
+                span('.js-locationCancelIcon .fa .fa-times-circle-o')
             ]),
-            div('.display-mode', {style: {display: state.editMode ? 'none' : 'block'}}, [
-                span('.js-locationDisplay', state.validZip),
-                span('.js-locationEditIcon', '(i)')
+            div('.Location--displayMode', {style: {display: state.editMode ? 'none' : 'block'}}, [
+                span('.js-locationMarkerIcon .Location-marker .fa .fa-map-marker'),
+                span('.js-locationDisplay .Location-display .js-display', state.validZip),
+                span('.js-locationEditIcon .Location-pencil .fa .fa-pencil .hidden-xs-down')
             ])
         ]);
     });

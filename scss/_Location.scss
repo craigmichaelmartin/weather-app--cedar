@@ -1,16 +1,16 @@
-.zip {
+.Location {
     color: white;
     font-size: 3.9em;
     text-shadow: .1em .1em .5em #373232;
 }
-.zip-marker {
+.Location-marker {
     color: $primary;
     font-size: .7em;
     vertical-align: middle;
     display: inline-block;
     padding-bottom: 0.3em;
 }
-.zip-pencil {
+.Location-pencil {
     color: $secondary;
     color: $secondary--transparent;
     font-size: .5em;
@@ -18,11 +18,11 @@
     display: inline-block;
     padding-bottom: 0.4em;
 }
-.zip-pencil:hover {
+.Location-pencil:hover {
     color: white;
     cursor: pointer;
 }
-.zip-edit {
+.Location-edit {
     display: inline-block;
     width: 3em;
     height: 1.4em;
@@ -31,7 +31,7 @@
     padding: 0;
     padding-left: .1em;
 }
-.zip-edit.is-invalid {
+.Location-edit.is-invalid {
     border: 1px solid $invalid;
 }
 .conditions {
@@ -42,7 +42,7 @@
     text-shadow: .1em .1em 1em $font-shadow-dark--transparent;
 }
 @media (max-width: $screen-sm-min) {
-    .zip-display {
+    .Location-display {
         border-bottom: 2px $primary solid;
     }
 }

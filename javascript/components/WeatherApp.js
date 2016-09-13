@@ -19,14 +19,26 @@ const view = function(state$, scaleDropdownDOM, locationInputDOM, hourDisplayDOM
     return xs.combine(state$, scaleDropdownDOM, locationInputDOM, hourDisplayDOM, dayDisplayDOM, daysDisplayDOM)
         .map(([state, scaleVTree, locationVTree, hourVTree, dayVTree, daysVTree]) => {
             return div([
-                scaleVTree,
-                h2(`Scale is ${state.scaleState.scale}`),
-                locationVTree,
-                h2(`Zip is ${state.locationStateCombine.zipTyping}`),
-                h2(`ValidZip is ${state.locationStateCombine.validZip}`),
-                hourVTree,
-                dayVTree,
-                daysVTree
+                div('.container-fluid', [
+                    div('.row', [
+                        div('.col-xs-10', [
+                            scaleVTree,
+                            locationVTree
+                        ])
+                    ]),
+                    div('.row .u-paddingBottom'),
+                    daysVTree,
+                    div('.row .u-paddingBottom'),
+                    div('.row', [
+                        div('.col-md-3 .col-md-push-7', [
+                            hourVTree,
+                            dayVTree
+                        ]),
+                        div('.col-md-7 .col-md-pull-3', [
+                            div('CHART')
+                        ])
+                    ])
+                ])
             ]);
         });
 };
