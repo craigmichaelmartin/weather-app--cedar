@@ -65,8 +65,6 @@ const view = function(state$) {
     });
 };
 
-// TODO: probably make a generic display between this and hour display
-// and inject whatever props are necessary to differentiate
 const DaysDisplay = function(sources) {
     const changeObj$ = intent({HTTPSource: sources.HTTP, DOMSource: sources.DOM});
     const stateObj$ = model(changeObj$, sources.scaleState, sources.props);
