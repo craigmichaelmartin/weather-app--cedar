@@ -1,4 +1,4 @@
-.statistics {
+.Statistics {
     height: 350px;
     padding: 25px;
     margin-bottom: 30px;
@@ -8,7 +8,7 @@
     box-shadow: $box-shadow 1px 1px 10px;
     box-shadow: $box-shadow--transparent 1px 1px 10px;
 }
-.statistics-header {
+.Statistics-header {
     font-size: 1.1em;
     font-weight: 600;
     text-shadow: 1px 1px 10px white;
@@ -17,7 +17,7 @@
     margin-bottom: 20px;
 }
 @media (max-width: $screen-md-min) {
-    .statistics {
+    .Statistics {
         height: auto;
     }
 }

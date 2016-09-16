@@ -38,18 +38,23 @@ const hourAttributes = [
 const view = function(state$) {
     return state$.map((state) => {
         const current = _.find(state.hours, {hour: state.whichHour});
-        return div('.HourDisplay', _.map(hourAttributes, (attr) => {
-            return div('row', [
-                div('.col-xs-5', [
-                    span(attr.label)
-                ]),
-                div('.col-xs-5', [
-                    span(`${attr.transform
-                        ? attr.transform(state.scale.scale, current[attr.name])
-                        : current[attr.name]}`)
-                ])
-            ]);
-        }));
+        return div('.Statistics .Statistics--hour', [
+            div('row', [
+                div('.col-xs-10 .Statistics-header', `${getDateSentence(state.scale.scale, current.weekday, current.monthname, current.day, current.hour)}`)
+            ]),
+            ... _.map(hourAttributes, (attr) => {
+                return div('row', [
+                    div('.col-xs-5', [
+                        span(attr.label)
+                    ]),
+                    div('.col-xs-5', [
+                        span(`${attr.transform
+                            ? attr.transform(state.scale.scale, current[attr.name])
+                            : current[attr.name]}`)
+                    ])
+                ]);
+            })
+        ]);
     });
 };
 
