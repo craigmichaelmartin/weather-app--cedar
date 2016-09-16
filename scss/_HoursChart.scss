@@ -17,9 +17,22 @@
 .HoursChart-bar {
     margin:0 1px;
     display: block;
-    background: rgba(#d1ecfa, .75);
+    background: $secondary;
+    background: $secondary--transparent;
     animation: draw 1s ease-in-out;
     font-size: .9em;
+    cursor: pointer;
+    color: $font-color;
+    text-shadow: .1em .1em .5em white;
+
+    &:hover {
+        background: white;
+        cursor: pointer;
+    }
+
+    &.is-active {
+        background: $primary;
+    }
 }
 
 .HoursChart-bar:after {
@@ -53,7 +66,8 @@
         top:100%;
     }
     .HoursChart-bar:after {
-        margin-top: 0;
+        display: none;
+        // margin-top: 0;
     }
     .HoursChart-hour:nth-child(n) .HoursChart-bar:before {
         display: none;
@@ -61,6 +75,8 @@
     .HoursChart-hour:nth-child(4n + 1) .HoursChart-bar:before {
         word-wrap: normal;
         display: block;
+        text-shadow: #000 0 0 3px;
+        color: white;
     }
     .HoursChart-bar:after {
         font-size: .5em;

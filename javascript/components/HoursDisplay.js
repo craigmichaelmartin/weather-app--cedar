@@ -37,17 +37,19 @@ const view = function(state$) {
     return state$.map((state) => {
         // Move these to appropriate place (model probs)
         const highTemp = _.maxBy(_.map(state.hours, 'temperature'), (t) => +t);
+        const scaledHighTemp = getScaledTemperature(state.scale.scale, highTemp);
         const lowTemp = _.minBy(_.map(state.hours, 'temperature'), (t) => +t);
         return ul('.HoursChart', _.map(_.filter(state.hours, {day: state.whichDay}), (hour) => {
+            const scaledTemp = getScaledTemperature(state.scale.scale, hour.temperature);
             const presentationTime = getScaledTime(state.scale.scale, hour.hour, {hideMinutes: true});
-            const presentationTemp = `${hour.temperature}°`;
+            const presentationTemp = `${scaledTemp}°`;
             return li('.HoursChart-hour', [
                 span('.HoursChart-bar .js-hour', {
                     class: {
                         'is-active': state.whichHour === hour.hour
                     },
                     style: {
-                        height: `${hour.temperature / highTemp * 100}%`
+                        height: `${scaledTemp / scaledHighTemp * 100}%`
                     },
                     attrs: {
                         'data-time': presentationTime,
