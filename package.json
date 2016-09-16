@@ -9,7 +9,7 @@
     "@cycle/isolate": "^1.4.0",
     "@cycle/xstream-run": "^3.1.0",
     "babel-polyfill": "~6.5.0",
-    "bootstrap": "~4.0.0-alpha.2",
+    "bootstrap": "4.0.0-alpha.2",
     "d3": "3.5.14",
     "es5-shim": "4.5.2",
     "font-awesome": "~4.5.0",
