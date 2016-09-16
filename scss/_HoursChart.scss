@@ -1,0 +1,68 @@
+.HoursChart {
+    display:table;
+    table-layout: fixed;
+    width:100%;
+    height:350px;
+    margin:0 auto;
+    padding: 0;
+}
+
+.HoursChart-hour {
+    position:relative;
+    display:table-cell;
+    vertical-align:bottom;
+    height:200px;
+}
+
+.HoursChart-bar {
+    margin:0 1px;
+    display: block;
+    background: rgba(#d1ecfa, .75);
+    animation: draw 1s ease-in-out;
+    font-size: .9em;
+}
+
+.HoursChart-bar:after {
+    position:absolute;
+    left:0;right:0;
+    margin-top: 25px;
+    display:block;
+    text-align:center;
+    content:attr(data-temp);
+    word-wrap: break-word;
+}
+
+.HoursChart-bar:before {
+    position:absolute;
+    left:0;right:0;
+    display:block;
+    text-align:center;
+    content:attr(data-time);
+    word-wrap: break-word;
+}
+
+@keyframes draw{
+  0%{height:0;}
+}
+
+@media (max-width: $screen-sm-min) {
+    .HoursChart {
+        height: 250px;
+    }
+    .HoursChart-bar:before {
+        top:100%;
+    }
+    .HoursChart-bar:after {
+        margin-top: 0;
+    }
+    .HoursChart-hour:nth-child(n) .HoursChart-bar:before {
+        display: none;
+    }
+    .HoursChart-hour:nth-child(4n + 1) .HoursChart-bar:before {
+        word-wrap: normal;
+        display: block;
+    }
+    .HoursChart-bar:after {
+        font-size: .5em;
+    }
+}

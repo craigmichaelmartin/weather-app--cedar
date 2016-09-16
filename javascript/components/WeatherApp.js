@@ -31,13 +31,12 @@ const view = function(state$, scaleDropdownDOM, locationInputDOM, hourDisplayDOM
                     daysVTree,
                     div('.row .u-paddingBottom'),
                     div('.row', [
-                        div('.col-md-3 .col-md-push-7', [
+                        div('.col-xl-3 .col-xl-push-7', [
                             hourVTree,
                             dayVTree
                         ]),
-                        div('.col-md-7 .col-md-pull-3', [
-                            hoursVTree,
-                            div('CHART')
+                        div('.col-xl-7 .col-xl-pull-3', [
+                            hoursVTree
                         ])
                     ])
                 ])

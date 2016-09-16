@@ -1,11 +1,13 @@
 import xs from 'xstream';
 import _ from 'lodash';
-import {div, span, img} from '@cycle/dom';
+import {div, img, ul, li, span} from '@cycle/dom';
 import isolate from '@cycle/isolate';
 import {getScaledTemperatureDegreeUnit} from '../util/temperature';
+import {getScaledTemperature} from '../util/temperature';
+import {getScaledTime} from '../util/time';
 
 const intent = function({HTTPSource, DOMSource}) {
-    const whichHour$ = DOMSource.select('.HoursDisplay-hour').events('click')
+    const whichHour$ = DOMSource.select('.HoursChart-bar').events('click')
         .map((ev) => +ev.currentTarget.dataset.hour);
     const hours$ = HTTPSource;
     // const hours$ = HTTPSource.select('hour').flatten()
@@ -33,19 +35,26 @@ const model = function(changeObj$, scale$, props$, whichDay$) {
 
 const view = function(state$) {
     return state$.map((state) => {
-        return div('.HoursDisplay', _.map(_.filter(state.hours, {day: state.whichDay}), (hour) => {
-            return div('.col-lg-1 .col-md-2 .HoursDisplay-hour .js-hour', {
-                class: {
-                    'is-active': state.whichHour === hour.hour
-                },
-                style: {
-                    'background-color': 'pink'
-                },
-                attrs: {
-                    'data-hour': hour.hour
-                }
-            }, [
-                div('.hour .row', `${hour.hour}`)
+        // Move these to appropriate place (model probs)
+        const highTemp = _.maxBy(_.map(state.hours, 'temperature'), (t) => +t);
+        const lowTemp = _.minBy(_.map(state.hours, 'temperature'), (t) => +t);
+        return ul('.HoursChart', _.map(_.filter(state.hours, {day: state.whichDay}), (hour) => {
+            const presentationTime = getScaledTime(state.scale.scale, hour.hour, {hideMinutes: true});
+            const presentationTemp = `${hour.temperature}°`;
+            return li('.HoursChart-hour', [
+                span('.HoursChart-bar .js-hour', {
+                    class: {
+                        'is-active': state.whichHour === hour.hour
+                    },
+                    style: {
+                        height: `${hour.temperature / highTemp * 100}%`
+                    },
+                    attrs: {
+                        'data-time': presentationTime,
+                        'data-hour': hour.hour,
+                        'data-temp': presentationTemp
+                    }
+                })
             ]);
         }));
     });
