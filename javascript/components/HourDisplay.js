@@ -39,11 +39,11 @@ const view = function(state$) {
     return state$.map((state) => {
         const current = _.find(state.hours, {hour: state.whichHour});
         return div('.Statistics .Statistics--hour', [
-            div('row', [
+            div('.row', [
                 div('.col-xs-10 .Statistics-header', `${getDateSentence(state.scale.scale, current.weekday, current.monthname, current.day, current.hour)}`)
             ]),
             ... _.map(hourAttributes, (attr) => {
-                return div('row', [
+                return div('.row', [
                     div('.col-xs-5', [
                         span(attr.label)
                     ]),

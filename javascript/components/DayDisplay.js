@@ -38,11 +38,11 @@ const view = function(state$) {
     return state$.map((state) => {
         const current = _.find(state.days, {day: state.whichDay});
         return div('.Statistics .Statistics--day', [
-            div('row', [
+            div('.row', [
                 div('.col-xs-10 .Statistics-header', `${getDateSentence(state.scale.scale, current.weekday, current.monthname, current.day, current.hour)}`)
             ]),
             ... _.map(dayAttributes, (attr) => {
-                return div('row', [
+                return div('.row', [
                     div('.col-xs-5', [
                         span(attr.label)
                     ]),
