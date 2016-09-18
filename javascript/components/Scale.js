@@ -1,10 +1,10 @@
 import xs from 'xstream';
-import {div, label} from '@cycle/dom';
+import {div, label, span} from '@cycle/dom';
 import isolate from '@cycle/isolate';
 
 const intent = function(DOMSource) {
     return DOMSource.select('.js-scale').events('click')
-        .map((ev) => ({scale: ev.target.dataset.value}));
+        .map((ev) => ({scale: ev.currentTarget.dataset.value}));
 };
 
 const model = function(newValue$, props$) {
@@ -25,7 +25,10 @@ const view = function(props$, state$) {
                 class: {
                     active: state.scale === 'english'
                 }
-            }, 'English'),
+            }, [
+                span('.Scales-text .hidden-xs-down', 'English'),
+                span('.Scales-text .visible-sm-down .hidden-sm-up', '°F')
+            ]),
             label('.Scales-item .btn .btn-primary .js-scale', {
                 attrs: {
                     'data-value': 'metric'
@@ -33,7 +36,10 @@ const view = function(props$, state$) {
                 class: {
                     active: state.scale === 'metric'
                 }
-            }, 'Metric')
+            }, [
+                span('.Scales-text .hidden-xs-down', 'Metric'),
+                span('.Scales-text .visible-sm-down .hidden-sm-up', '°C')
+            ])
         ])
     );
 };
