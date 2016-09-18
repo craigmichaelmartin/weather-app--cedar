@@ -33,10 +33,10 @@
     }
 }
 @media (min-width: $screen-sm-min) {
-    .Day-temperature-high {
+    .Day-temperature--high {
         float: right;
     }
-    .Day-temperature-low {
+    .Day-temperature--low {
         float: left;
     }
 }
