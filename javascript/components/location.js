@@ -74,7 +74,7 @@ const view = function(state$) {
                 span('.js-locationCancelIcon .fa .fa-times-circle-o')
             ]),
             div('.Location--displayMode', {style: {display: state.editMode ? 'none' : 'block'}}, [
-                span('.js-locationMarkerIcon .Location-marker .fa .fa-map-marker'),
+                span('.js-locationMarkerIcon .Location-marker .fa .fa-map-marker .hidden-xs-down'),
                 span('.js-locationDisplay .Location-display .js-display', state.validZip),
                 span('.js-locationEditIcon .Location-pencil .fa .fa-pencil .hidden-xs-down')
             ])
