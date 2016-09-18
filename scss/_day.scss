@@ -1,42 +1,42 @@
-.day {
+.Day {
     cursor: pointer;
     text-shadow: $font-shadow-dark 0 0 3px;
     text-shadow: $font-shadow-dark--transparent 0 0 3px;
     color: white;
     font-size: 1.3em;
 }
-.day.is-active {
+.Day.is-active {
     border-radius: 10px;
     background-color: $secondary;
     background-color: $secondary--transparent;
     box-shadow: $box-shadow 1px 1px 10px;
     box-shadow: $box-shadow--transparent 1px 1px 10px;
 }
-.day-label {
+.Day-label {
     text-align: center;
     font-size: 1.2em;
 }
-.day-temperature {
+.Day-temperature {
     font-weight: 700;
 }
-.day-image {
+.Day-image {
     display:block;
     margin:auto;
 }
 @media (max-width: $screen-sm-min) {
-    .day-image {
+    .Day-image {
         width: 30px;
         height: 30px;
     }
-    .day {
+    .Day {
         clear: both;
     }
 }
 @media (min-width: $screen-sm-min) {
-    .day-temperature-high {
+    .Day-temperature-high {
         float: right;
     }
-    .day-temperature-low {
+    .Day-temperature-low {
         float: left;
     }
 }

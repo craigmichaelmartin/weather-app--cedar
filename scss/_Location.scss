@@ -9,6 +9,7 @@
     vertical-align: middle;
     display: inline-block;
     padding-bottom: 0.3em;
+    padding-right: 15px;
 }
 .Location-pencil {
     color: $secondary;
@@ -17,6 +18,7 @@
     vertical-align: middle;
     display: inline-block;
     padding-bottom: 0.4em;
+    padding-left: 15px;
 }
 .Location-pencil:hover {
     color: white;
@@ -33,13 +35,6 @@
 }
 .Location-edit.is-invalid {
     border: 1px solid $invalid;
-}
-.conditions {
-    margin-top: -.2em;
-    color: white;
-    font-size: 1.5em;
-    text-shadow: .1em .1em 1em $font-shadow-dark;
-    text-shadow: .1em .1em 1em $font-shadow-dark--transparent;
 }
 @media (max-width: $screen-sm-min) {
     .Location-display {

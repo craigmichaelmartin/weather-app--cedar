@@ -1,5 +1,5 @@
 import xs from 'xstream';
-import {div, span} from '@cycle/dom';
+import {div, label} from '@cycle/dom';
 import isolate from '@cycle/isolate';
 
 const intent = function(DOMSource) {
@@ -17,9 +17,23 @@ const view = function(props$, state$) {
         // div('.scale js-scale btn-group', {attrs: {'data-toggle': 'buttons'}}, [
         //     label(`.btn btn-primary scale-button js-english ${if (props.scale === 'english') {'active'}`, [
         //         input('.js-scaleInput', {attrs: {type: 'radio', autocomplete: 'off'}}
-        div('.scales', [
-            span(`.scale .js-scale ${state.scale === 'english' ? 'is-active' : ''}`, {attrs: {'data-value': 'english'}}, ['English']),
-            span(`.scale .js-scale ${state.scale === 'metric' ? 'is-active' : ''}`, {attrs: {'data-value': 'metric'}}, ['Metric'])
+        div('.Scales .btn-group', [
+            label('.Scales-item .btn .btn-primary .js-scale', {
+                attrs: {
+                    'data-value': 'english'
+                },
+                class: {
+                    active: state.scale === 'english'
+                }
+            }, 'English'),
+            label('.Scales-item .btn .btn-primary .js-scale', {
+                attrs: {
+                    'data-value': 'metric'
+                },
+                class: {
+                    active: state.scale === 'metric'
+                }
+            }, 'Metric')
         ])
     );
 };

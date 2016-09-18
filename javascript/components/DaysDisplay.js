@@ -2,10 +2,10 @@ import xs from 'xstream';
 import _ from 'lodash';
 import {div, span, img} from '@cycle/dom';
 import isolate from '@cycle/isolate';
-import {getScaledTemperatureDegreeUnit} from '../util/temperature';
+import {getScaledTemperatureDegree} from '../util/temperature';
 
 const intent = function({HTTPSource, DOMSource}) {
-    const whichDay$ = DOMSource.select('.DaysDisplay-day').events('click')
+    const whichDay$ = DOMSource.select('.js-day').events('click')
         .map((ev) => +ev.currentTarget.dataset.day);
     const days$ = HTTPSource;
     // const days$ = HTTPSource.select('day').flatten()
@@ -33,30 +33,30 @@ const model = function(changeObj$, scale$, props$) {
 
 const view = function(state$) {
     return state$.map((state) => {
-        return div('.DaysDisplay', _.map(state.days, (day) => {
-            return div('.col-lg-1 .col-md-2 .DaysDisplay-day .js-day', {
-                class: {
-                    'is-active': state.whichDay === day.day
-                },
-                attrs: {
-                    'data-day': day.day
-                }
-            }, [
-                div('.day .row', [
+        return div(_.map(state.days, (day) => {
+            return div('.col-lg-1 .col-md-2', [
+                div('.Day .js-day .row', {
+                    class: {
+                        'is-active': state.whichDay === day.day
+                    },
+                    attrs: {
+                        'data-day': day.day
+                    }
+                }, [
                     div('.col-md-10 .col-xs-3', [
-                        div('.day-label', day.weekdayShort)
+                        div('.Day-label', day.weekdayShort)
                     ]),
                     div('.col-md-10 .col-xs-3', [
-                        img('.day-image', {attrs: {src: day.iconUrl}})
+                        img('.Day-image', {attrs: {src: day.iconUrl}})
                     ]),
                     div('.col-md-5 .col-xs-2', [
-                        span('.day-temperature .day-temperature-high .js-dayHighTemperature',
-                            getScaledTemperatureDegreeUnit(state.scale.scale, day.high)
+                        span('.Day-temperature .Day-temperature--high .js-dayHighTemperature',
+                            getScaledTemperatureDegree(state.scale.scale, day.high)
                         )
                     ]),
                     div('.col-md-5 .col-xs-2', [
-                        span('.day-temperature .day-temperature-low .js-dayLowTemperature',
-                            getScaledTemperatureDegreeUnit(state.scale.scale, day.low)
+                        span('.Day-temperature .day-temperature--low .js-dayLowTemperature',
+                            getScaledTemperatureDegree(state.scale.scale, day.low)
                         )
                     ])
                 ])
