@@ -137,6 +137,9 @@ const WeatherApp = function WeatherApp({DOM, HTTP}) {
     });
     const getWeather$ = xs.merge(getDayWeather$, getHourWeather$);
     // Needs to be given to a DOM driver otherwise never gets called - reason unclear
+    // Answer: RxJS Observables don't do anything until you subscribe,
+    // then they set up observers and a subscription and the observable itself is done
+    // https://twitter.com/BenLesh/status/778041743061037056
     const dayWeather$ = HTTP.select('day').flatten()
         .map((res) => {
             return _.map(res.body.forecast.simpleforecast.forecastday, parseDays);
