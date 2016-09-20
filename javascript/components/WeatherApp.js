@@ -4,27 +4,17 @@ import {h2, div} from '@cycle/dom';
 import isolate from '@cycle/isolate';
 import ScaleDropdown from './Scale';
 import LocationInput from './Location';
-import HourDisplay from './HourDisplay';
-import DayDisplay from './DayDisplay';
 import DaysDisplay from './DaysDisplay';
 import HoursDisplay from './HoursDisplay';
 import CurrentDisplay from './CurrentDisplay';
+import Statistics from './Statistics';
 
-const model = function(scaleDropdownValue$, locationInputObj$, dayWeather$, hourWeather$) {
-    return xs.combine(scaleDropdownValue$, locationInputObj$.combine, dayWeather$, hourWeather$)
-        .map(([scaleState, locationStateCombine, dayWeather, hourWeather]) => {
-            return {scaleState, locationStateCombine, dayWeather, hourWeather};
-        });
-};
-
-const view = function(state$, scaleDropdownDOM, locationInputDOM,
-                      hourDisplayDOM, dayDisplayDOM, daysDisplayDOM,
-                      hoursDisplayDom, currentDisplayDom) {
-    return xs.combine(state$, scaleDropdownDOM, locationInputDOM,
-                      hourDisplayDOM, dayDisplayDOM, daysDisplayDOM,
-                      hoursDisplayDom, currentDisplayDom)
-        .map(([state, scaleVTree, locationVTree, hourVTree, dayVTree, daysVTree,
-               hoursVTree, conditionsVTree]) => {
+const view = function(scaleDropdownDOM, locationInputDOM, daysDisplayDOM,
+                      hoursDisplayDom, currentDisplayDom, statisticsDOM) {
+    return xs.combine(scaleDropdownDOM, locationInputDOM, daysDisplayDOM,
+                      hoursDisplayDom, currentDisplayDom, statisticsDOM)
+        .map(([scaleVTree, locationVTree, daysVTree,
+               hoursVTree, conditionsVTree, statisticsVTree]) => {
             return div([
                 div('.container-fluid', [
                     div('.row', [
@@ -43,8 +33,7 @@ const view = function(state$, scaleDropdownDOM, locationInputDOM,
                     div('.row .u-paddingBottom'),
                     div('.row', [
                         div('.col-xl-3 .col-xl-push-7', [
-                            hourVTree,
-                            dayVTree
+                            statisticsVTree
                         ]),
                         div('.col-xl-7 .col-xl-pull-3', [
                             hoursVTree
@@ -171,28 +160,21 @@ const WeatherApp = function WeatherApp({DOM, HTTP}) {
         props: hoursDisplayProps$,
         whichDay: daysDisplay.whichDay
     });
-    const hourDisplay = HourDisplay({
-        HTTP: hourWeather$,
-        scaleState: scaleDropdown.value,
-        whichHour: hoursDisplay.whichHour
-    });
-    const dayDisplay = DayDisplay({
-        HTTP: dayWeather$,
-        scaleState: scaleDropdown.value,
-        whichDay: daysDisplay.whichDay
-    });
     const currentDisplay = CurrentDisplay({
         HTTP: hourWeather$,
         scaleState: scaleDropdown.value,
         whichHour: hoursDisplay.whichHour
     });
-    const state$ = model(
-        scaleDropdown.value, locationInput.stateObj, dayWeather$,
-        hourWeather$
-    );
+    const statistics = Statistics({
+        hourHTTP: hourWeather$,
+        dayHTTP: dayWeather$,
+        scaleState: scaleDropdown.value,
+        whichHour: hoursDisplay.whichHour,
+        whichDay: daysDisplay.whichDay
+    });
     const vtree$ = view(
-        state$, scaleDropdown.DOM, locationInput.DOM, hourDisplay.DOM,
-        dayDisplay.DOM, daysDisplay.DOM, hoursDisplay.DOM, currentDisplay.DOM
+        scaleDropdown.DOM, locationInput.DOM, daysDisplay.DOM,
+        hoursDisplay.DOM, currentDisplay.DOM, statistics.DOM
     );
     return {
         DOM: vtree$,

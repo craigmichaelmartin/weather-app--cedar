@@ -23,9 +23,10 @@ const intent = function({HTTPSource, DOMSource}) {
 const model = function(changeObj$, scale$, props$, whichDay$) {
     const initialHour$ = props$.map((props) => props.initial.hour).take(1);
     const whichHour$ = xs.merge(initialHour$, changeObj$.whichHour).remember();
-    const combine$ = xs.combine(changeObj$.hours, whichHour$, scale$, whichDay$).remember()
-        .map(([hours, whichHour, scale, whichDay]) => {
-            return {hours, whichHour, scale, whichDay};
+    const hoursActive$ = xs.merge(whichHour$.mapTo(true), whichDay$.mapTo(false)).remember();
+    const combine$ = xs.combine(changeObj$.hours, whichHour$, scale$, whichDay$, hoursActive$).remember()
+        .map(([hours, whichHour, scale, whichDay, hoursActive]) => {
+            return {hours, whichHour, scale, whichDay, hoursActive};
         });
     return {
         combine: combine$,
@@ -46,7 +47,7 @@ const view = function(state$) {
             return li('.HoursChart-hour', [
                 span('.HoursChart-bar .js-hour', {
                     class: {
-                        'is-active': state.whichHour === hour.hour
+                        'is-active': state.hoursActive && state.whichHour === hour.hour
                     },
                     style: {
                         height: `${scaledTemp / scaledHighTemp * 100}%`
