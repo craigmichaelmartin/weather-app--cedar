@@ -16,13 +16,31 @@ const model = function(scaleDropdownValue$, locationInputObj$, whichDay$, whichH
         });
 };
 
-const view = function(scaleDropdownDOM, locationInputDOM, daysDisplayDOM,
+// Returns a condition in the set {snowy, rainy, clear, cloudy}
+const getConditionClass = (condition) => {
+    if (/snow/i.test(condition)) {
+        return 'is-snowy';
+    }
+    if (/rain|thunderstorm|showers/i.test(condition)) {
+        return 'is-rainy';
+    }
+    if (/clear|sunny/i.test(condition)) {
+        return 'is-clear';
+    }
+    return 'is-cloudy';
+};
+
+const view = function(state$, scaleDropdownDOM, locationInputDOM, daysDisplayDOM,
                       hoursDisplayDom, currentDisplayDom, statisticsDOM) {
-    return xs.combine(scaleDropdownDOM, locationInputDOM, daysDisplayDOM,
+    return xs.combine(state$, scaleDropdownDOM, locationInputDOM, daysDisplayDOM,
                       hoursDisplayDom, currentDisplayDom, statisticsDOM)
-        .map(([scaleVTree, locationVTree, daysVTree,
+        .map(([state, scaleVTree, locationVTree, daysVTree,
                hoursVTree, conditionsVTree, statisticsVTree]) => {
-            return div([
+            return div('.weatherApp', {
+                class: {
+                    [getConditionClass(state.condition)]: true
+                }
+            }, [
                 div('.container-fluid', [
                     div('.row', [
                         div('.col-xs-10', [
@@ -198,8 +216,14 @@ const WeatherApp = function WeatherApp({DOM, HTTP, history}) {
         whichHour: hoursDisplay.whichHour,
         whichDay: daysDisplay.whichDay
     });
+    const state$ = xs.combine(hourWeather$, hoursDisplay.whichHour).remember()
+        .map(([hours, whichHour]) => {
+            if (whichHour == null) whichHour = new Date().getHours() + 1;
+            const current = _.find(hours, {hour: whichHour});
+            return {condition: current.condition};
+        });
     const vtree$ = view(
-        scaleDropdown.DOM, locationInput.DOM, daysDisplay.DOM,
+        state$, scaleDropdown.DOM, locationInput.DOM, daysDisplay.DOM,
         hoursDisplay.DOM, currentDisplay.DOM, statistics.DOM
     );
     const history$ = model(
