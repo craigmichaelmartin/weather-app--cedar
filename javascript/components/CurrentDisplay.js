@@ -15,6 +15,7 @@ const intent = function({HTTPSource}) {
 const model = function(hour$, scale$, whichHour$) {
     const combine$ = xs.combine(hour$, scale$, whichHour$).remember()
         .map(([hours, scale, whichHour]) => {
+            if (whichHour == null) whichHour = new Date().getHours() + 1;
             return {hours, scale, whichHour};
         });
     return combine$;

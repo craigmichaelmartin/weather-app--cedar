@@ -9,6 +9,13 @@ import HoursDisplay from './HoursDisplay';
 import CurrentDisplay from './CurrentDisplay';
 import Statistics from './Statistics';
 
+const model = function(scaleDropdownValue$, locationInputObj$, whichDay$, whichHour$) {
+    return xs.combine(scaleDropdownValue$, locationInputObj$.combine, whichDay$, whichHour$)
+        .map(([scaleState, locationState, whichDay, whichHour]) => {
+            return `/${locationState.validZip}/${whichDay}${whichHour == null ? '' : `/${whichHour}`}/${scaleState.scale}`;
+        });
+};
+
 const view = function(scaleDropdownDOM, locationInputDOM, daysDisplayDOM,
                       hoursDisplayDom, currentDisplayDom, statisticsDOM) {
     return xs.combine(scaleDropdownDOM, locationInputDOM, daysDisplayDOM,
@@ -94,29 +101,49 @@ const parseHours = function (results) {
     });
 };
 
-const WeatherApp = function WeatherApp({DOM, HTTP}) {
-    const scaleProps$ = xs.of({
-        initial: 'english'
+const isNumeric = function(thing) {
+    const casted = +thing;
+    return !_.isNaN(casted) && _.isNumber(casted);
+};
+
+const getPropValues = function(zip, day, hour, scale) {
+    return {
+        zip: +zip,
+        day: +day || new Date().getDate(),
+        hour: hour && isNumeric(hour) ? +hour : scale && isNumeric(scale) ? +scale : void 0,
+        scale: scale ? scale : hour && !isNumeric(hour) ? hour : day && !isNumeric(day) ? day : 'english',
+        editMode: false
+    };
+};
+
+const getInitialValuesFromPathname = function(pathname) {
+    const array = pathname.split('/');
+    array.shift();
+    return getPropValues(...array);
+};
+
+const WeatherApp = function WeatherApp({DOM, HTTP, history}) {
+    // const initZip$ = HTTP.select('day').flatten().startWith({body: {location: {zip: '44024'}}})
+    //     .map((res) => {
+    //         return res.body.location.zip;
+    //     }).remember().take(1);
+    // const staticProps$ = history.map((hist) => {
+    //     return getInitialValuesFromPathname(hist.pathname);
+    // });
+    // const props$ = xs.combine(staticProps$, initZip$).remember()
+    //     .map(([staticProps, initZip]) => {
+    //         if (staticProps.zip) return staticProps;
+    //         return _.extend({}, staticProps, {zip: initZip});
+    //     });
+    const autoZip$ = HTTP.select('day').flatten()
+        .map((res) => {
+            return res.body.location && res.body.location.zip;
+        }).remember().take(1);
+    const props$ = history.map((hist) => {
+        return getInitialValuesFromPathname(hist.pathname);
     });
-    const locationProps$ = xs.of({
-        initial: {
-            zip: '44024',
-            editMode: false
-        }
-    });
-    const daysDisplayProps$ = xs.of({
-        initial: {
-            day: new Date().getDate()
-        }
-    });
-    const currentHour = new Date().getHours() + 1;
-    const hoursDisplayProps$ = xs.of({
-        initial: {
-            hour: currentHour > 23 ? 0 : currentHour
-        }
-    });
-    const scaleDropdown = ScaleDropdown({DOM, props$: scaleProps$});
-    const locationInput = LocationInput({DOM, props$: locationProps$});
+    const scaleDropdown = ScaleDropdown({DOM, props$});
+    const locationInput = LocationInput({DOM, props$, autoZip$});
     const getDayWeather$ = locationInput.stateObj.zipLegit.map((zip) => {
         const end = `${zip ? '' : 'geolookup/'}forecast10day/q/${zip || 'autoip'}.json`;
         const url = `//api.wunderground.com/api/3f6df2a3f0916b99/${end}`;
@@ -150,13 +177,13 @@ const WeatherApp = function WeatherApp({DOM, HTTP}) {
         HTTP: dayWeather$,
         DOM,
         scaleState: scaleDropdown.value,
-        props: daysDisplayProps$
+        props: props$
     });
     const hoursDisplay = HoursDisplay({
         HTTP: hourWeather$,
         DOM,
         scaleState: scaleDropdown.value,
-        props: hoursDisplayProps$,
+        props: props$,
         whichDay: daysDisplay.whichDay
     });
     const currentDisplay = CurrentDisplay({
@@ -175,9 +202,15 @@ const WeatherApp = function WeatherApp({DOM, HTTP}) {
         scaleDropdown.DOM, locationInput.DOM, daysDisplay.DOM,
         hoursDisplay.DOM, currentDisplay.DOM, statistics.DOM
     );
+    const history$ = model(
+        scaleDropdown.value, locationInput.stateObj, daysDisplay.whichDay,
+        hoursDisplay.whichHour
+    );
+
     return {
         DOM: vtree$,
-        HTTP: getWeather$
+        HTTP: getWeather$,
+        history: history$
     };
 };
 

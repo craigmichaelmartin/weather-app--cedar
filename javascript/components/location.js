@@ -30,12 +30,12 @@ const intent = function(DOMSource) {
     };
 };
 
-const model = function(obj$, props$) {
+const model = function(obj$, props$, autoZip$) {
     // Could I just use startWith and pass the value, instead of creating a
     // one value stream to pass in, mapping it, and taking the single value?
-    const initialZipTyping$ = props$.map((props) => props.initial.zip).take(1);
-    const initialZipLegit$ = props$.map((props) => props.initial.zip).take(1); // unclear why I can not reuse initialZipTyping$
-    const initialMode$ = props$.map((props) => props.initial.editMode).take(1);
+    const initialZipTyping$ = props$.map((props) => props.zip).take(1);
+    const initialZipLegit$ = props$.map((props) => props.zip).take(1); // unclear why I can not reuse initialZipTyping$
+    const initialMode$ = props$.map((props) => props.editMode).take(1);
     const validZip$ = obj$.zipTyping.filter((zip) => zip.length === 5);
     const zipTyping$ = xs.merge(initialZipTyping$, obj$.zipTyping).remember();
     const zipLegit$ = xs.merge(initialZipLegit$, validZip$).remember();
@@ -43,9 +43,9 @@ const model = function(obj$, props$) {
         initialMode$, obj$.displayClick, obj$.inputBlur, obj$.editIconClick,
         obj$.mapIconClick, obj$.cancelIconClick, obj$.zipFiveLetters
     ).remember();
-    const combine$ = xs.combine(zipTyping$, zipLegit$, editMode$).remember()
-        .map(([zipTyping, validZip, editMode]) => {
-            return {zipTyping, validZip, editMode};
+    const combine$ = xs.combine(zipTyping$, zipLegit$, editMode$, autoZip$).remember()
+        .map(([zipTyping, validZip, editMode, autoZip]) => {
+            return {zipTyping: zipTyping || autoZip, validZip: validZip || autoZip, editMode};
         });
     return {
         combine: combine$,
@@ -84,7 +84,7 @@ const view = function(state$) {
 
 const LocationInput = function(sources) {
     const changeObj$ = intent(sources.DOM);
-    const stateObj$ = model(changeObj$, sources.props$);
+    const stateObj$ = model(changeObj$, sources.props$, sources.autoZip$);
     const vtree$ = view(stateObj$.combine);
     return {
         DOM: vtree$,

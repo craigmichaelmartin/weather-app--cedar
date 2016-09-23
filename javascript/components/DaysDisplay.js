@@ -19,7 +19,7 @@ const intent = function({HTTPSource, DOMSource}) {
 };
 
 const model = function(changeObj$, scale$, props$) {
-    const initialDay$ = props$.map((props) => props.initial.day).take(1);
+    const initialDay$ = props$.map((props) => props.day).take(1);
     const whichDay$ = xs.merge(initialDay$, changeObj$.whichDay).remember();
     const combine$ = xs.combine(changeObj$.days, whichDay$, scale$).remember()
         .map(([days, whichDay, scale]) => {
