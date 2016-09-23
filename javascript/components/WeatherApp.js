@@ -217,9 +217,9 @@ const WeatherApp = function WeatherApp({DOM, HTTP, history}) {
         whichDay: daysDisplay.whichDay
     });
     const state$ = xs.combine(hourWeather$, hoursDisplay.whichHour).remember()
-        .map(([hours, whichHour]) => {
-            if (whichHour == null) whichHour = new Date().getHours() + 1;
-            const current = _.find(hours, {hour: whichHour});
+        .map(([hours]) => {
+            const currentHour = new Date().getHours() + 1;
+            const current = _.find(hours, {hour: currentHour});
             return {condition: current.condition};
         });
     const vtree$ = view(

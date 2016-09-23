@@ -12,18 +12,18 @@ const intent = function({HTTPSource}) {
     //     }).remember();
 };
 
-const model = function(hour$, scale$, whichHour$) {
-    const combine$ = xs.combine(hour$, scale$, whichHour$).remember()
-        .map(([hours, scale, whichHour]) => {
-            if (whichHour == null) whichHour = new Date().getHours() + 1;
-            return {hours, scale, whichHour};
+const model = function(hour$, scale$) {
+    const combine$ = xs.combine(hour$, scale$).remember()
+        .map(([hours, scale]) => {
+            const currentHour = new Date().getHours() + 1;
+            return {hours, scale, currentHour};
         });
     return combine$;
 };
 
 const view = function(state$) {
     return state$.map((state) => {
-        const current = _.find(state.hours, {hour: state.whichHour});
+        const current = _.find(state.hours, {hour: state.currentHour});
         return div('.CurrentDisplay', [
             div('.CurrentDisplay-conditions',
                 `${getScaledTemperatureDegreeUnit(state.scale.scale, current.temperature)} ${current.condition}`)
@@ -33,7 +33,7 @@ const view = function(state$) {
 
 const CurrentDisplay = function(sources) {
     const change$ = intent({HTTPSource: sources.HTTP});
-    const state$ = model(change$, sources.scaleState, sources.whichHour);
+    const state$ = model(change$, sources.scaleState);
     const vtree$ = view(state$);
     return {
         DOM: vtree$
