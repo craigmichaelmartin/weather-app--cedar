@@ -1,33 +1,23 @@
 import xs from 'xstream';
 import _ from 'underscore';
-import {h2, div} from '@cycle/dom';
+import {div} from '@cycle/dom';
 import isolate from '@cycle/isolate';
-import ScaleDropdown from './Scale';
-import LocationInput from './Location';
-import DaysDisplay from './DaysDisplay';
-import HoursDisplay from './HoursDisplay';
-import CurrentDisplay from './CurrentDisplay';
-import Statistics from './Statistics';
+import ScaleDropdown from '../Scale/index';
+import LocationInput from '../Location/index';
+import DaysDisplay from '../DaysDisplay/index';
+import HoursDisplay from '../HoursDisplay/index';
+import CurrentDisplay from '../CurrentDisplay/index';
+import Statistics from '../Statistics/index';
+import getConditionClassName from '../../util/getConditionClassName';
+import parseDays from '../../util/parseDays';
+import parseHours from '../../util/parseHours';
+import parsedPropValues from '../../util/parsedPropValues';
 
 const model = function(scaleDropdownValue$, locationInputObj$, whichDay$, whichHour$) {
     return xs.combine(scaleDropdownValue$, locationInputObj$.combine, whichDay$, whichHour$)
         .map(([scaleState, locationState, whichDay, whichHour]) => {
             return `/${locationState.validZip}/${whichDay}${whichHour == null ? '' : `/${whichHour}`}/${scaleState.scale}`;
         });
-};
-
-// Returns a condition in the set {snowy, rainy, clear, cloudy}
-const getConditionClass = (condition) => {
-    if (/snow/i.test(condition)) {
-        return 'is-snowy';
-    }
-    if (/rain|thunderstorm|showers/i.test(condition)) {
-        return 'is-rainy';
-    }
-    if (/clear|sunny/i.test(condition)) {
-        return 'is-clear';
-    }
-    return 'is-cloudy';
 };
 
 const view = function(state$, scaleDropdownDOM, locationInputDOM, daysDisplayDOM,
@@ -38,7 +28,7 @@ const view = function(state$, scaleDropdownDOM, locationInputDOM, daysDisplayDOM
                hoursVTree, conditionsVTree, statisticsVTree]) => {
             return div('.weatherApp', {
                 class: {
-                    [getConditionClass(state.condition)]: true
+                    [getConditionClassName(state.condition)]: true
                 }
             }, [
                 div('.container-fluid', [
@@ -69,77 +59,6 @@ const view = function(state$, scaleDropdownDOM, locationInputDOM, daysDisplayDOM
         });
 };
 
-const parseDays = function (results) {
-    return _.mapObject({
-        condition: results.conditions,
-        iconUrl: results.icon_url,
-        iconAlt: results.icon,
-        high: results.high.fahrenheit,
-        low: results.low.fahrenheit,
-        monthname: results.date.monthname,
-        weekday: results.date.weekday,
-        weekdayShort: results.date.weekday_short,
-        day: +results.date.day,
-        totalSnow: results.snow_allday.in,
-        averageHumidity: results.avehumidity,
-        averageWindDirection: results.avewind.dir,
-        averageWind: results.avewind.mph,
-        precipitation: results.qpf_allday.in
-    }, (val) => {
-        if (val === '-9999' || val === '-999') {
-            return void 0;
-        }
-        return val;
-    });
-};
-
-const parseHours = function (results) {
-    return _.mapObject({
-        monthname: results.FCTTIME.month_name,
-        weekday: results.FCTTIME.weekday_name,
-        weekdayShort: results.FCTTIME.weekday_name_abbrev,
-        day: +results.FCTTIME.mday,
-        hour: +results.FCTTIME.hour, // 24 hour clock
-        condition: results.condition,
-        feelsLike: results.feelslike.english,
-        humidity: results.humidity,
-        iconUrl: results.icon_url,
-        iconAlt: results.icon,
-        temperature: results.temp.english,
-        dewpoint: results.dewpoint.english,
-        heatIndex: results.heatindex.english,
-        windDirection: results.wdir.dir,
-        windSpeed: results.wspd.english,
-        precipitation: results.qpf.english
-    }, (val) => {
-        if (val === '-9999' || val === '-999') {
-            return void 0;
-        }
-        return val;
-    });
-};
-
-const isNumeric = function(thing) {
-    const casted = +thing;
-    return !_.isNaN(casted) && _.isNumber(casted);
-};
-
-const getPropValues = function(zip, day, hour, scale) {
-    return {
-        zip: +zip,
-        day: +day || new Date().getDate(),
-        hour: hour && isNumeric(hour) ? +hour : scale && isNumeric(scale) ? +scale : void 0,
-        scale: scale ? scale : hour && !isNumeric(hour) ? hour : day && !isNumeric(day) ? day : 'english',
-        editMode: false
-    };
-};
-
-const getInitialValuesFromPathname = function(pathname) {
-    const array = pathname.split('/');
-    array.shift();
-    return getPropValues(...array);
-};
-
 const WeatherApp = function WeatherApp({DOM, HTTP, history}) {
     // const initZip$ = HTTP.select('day').flatten().startWith({body: {location: {zip: '44024'}}})
     //     .map((res) => {
@@ -158,7 +77,7 @@ const WeatherApp = function WeatherApp({DOM, HTTP, history}) {
             return res.body.location && res.body.location.zip;
         }).remember().take(1);
     const props$ = history.map((hist) => {
-        return getInitialValuesFromPathname(hist.pathname);
+        return parsedPropValues(hist.pathname);
     });
     const scaleDropdown = ScaleDropdown({DOM, props$});
     const locationInput = LocationInput({DOM, props$, autoZip$});

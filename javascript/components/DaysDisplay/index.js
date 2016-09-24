@@ -2,7 +2,7 @@ import xs from 'xstream';
 import _ from 'lodash';
 import {div, span, img} from '@cycle/dom';
 import isolate from '@cycle/isolate';
-import {getScaledTemperatureDegree} from '../util/temperature';
+import {getScaledTemperatureDegree} from '../../util/temperature';
 
 const intent = function({HTTPSource, DOMSource}) {
     const whichDay$ = DOMSource.select('.js-day').events('click')

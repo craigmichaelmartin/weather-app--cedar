@@ -5,7 +5,7 @@ import {makeDOMDriver} from '@cycle/dom';
 import {makeHTTPDriver} from '@cycle/http';
 import {createHashHistory} from 'history';
 import {makeHistoryDriver} from '@cycle/history';
-import WeatherApp from './components/WeatherApp';
+import WeatherApp from './components/WeatherApp/index';
 
 // uses hash history for hosting on gh-pages
 run(WeatherApp, {

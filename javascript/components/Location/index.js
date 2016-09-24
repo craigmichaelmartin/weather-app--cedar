@@ -1,7 +1,7 @@
 import xs from 'xstream';
 import {div, span, input} from '@cycle/dom';
 import isolate from '@cycle/isolate';
-import {isValidZip} from '../util/zip';
+import {isValidZip} from '../../util/zip';
 import _ from 'lodash';
 
 const intent = function(DOMSource) {

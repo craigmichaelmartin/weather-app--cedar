@@ -2,7 +2,7 @@ import xs from 'xstream';
 import _ from 'lodash';
 import {div} from '@cycle/dom';
 import isolate from '@cycle/isolate';
-import {getScaledTemperatureDegreeUnit} from '../util/temperature';
+import {getScaledTemperatureDegreeUnit} from '../../util/temperature';
 
 const intent = function({HTTPSource}) {
     return HTTPSource;

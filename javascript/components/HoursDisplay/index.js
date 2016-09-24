@@ -2,9 +2,9 @@ import xs from 'xstream';
 import _ from 'lodash';
 import {div, img, ul, li, span} from '@cycle/dom';
 import isolate from '@cycle/isolate';
-import {getScaledTemperatureDegreeUnit} from '../util/temperature';
-import {getScaledTemperature} from '../util/temperature';
-import {getScaledTime} from '../util/time';
+import {getScaledTemperatureDegreeUnit} from '../../util/temperature';
+import {getScaledTemperature} from '../../util/temperature';
+import {getScaledTime} from '../../util/time';
 
 const intent = function({HTTPSource, DOMSource}) {
     const whichHour$ = DOMSource.select('.HoursChart-bar').events('click')

@@ -2,10 +2,10 @@ import xs from 'xstream';
 import _ from 'lodash';
 import {div, span} from '@cycle/dom';
 import isolate from '@cycle/isolate';
-import {getScaledTemperatureDegreeUnit} from '../util/temperature';
-import {getDateSentence} from '../util/date';
-import {getScaledLength} from '../util/length';
-import {getScaledSpeedUnit} from '../util/speed';
+import {getScaledTemperatureDegreeUnit} from '../../util/temperature';
+import {getDateSentence} from '../../util/date';
+import {getScaledLength} from '../../util/length';
+import {getScaledSpeedUnit} from '../../util/speed';
 
 const model = function(day$, hour$, scale$, whichDay$, whichHour$) {
     const whichStatistics$ = xs.merge(whichHour$.mapTo('hour'), whichDay$.mapTo('day')).remember();
