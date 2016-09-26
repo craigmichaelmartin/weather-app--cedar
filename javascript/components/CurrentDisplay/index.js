@@ -1,6 +1,6 @@
-import xs from 'xstream';
 import isolate from '@cycle/isolate';
 import view from './view';
+import model from './model';
 
 const intent = function({HTTPSource}) {
     return HTTPSource;
@@ -8,15 +8,6 @@ const intent = function({HTTPSource}) {
     //     .map((res) => {
     //         return res.body.hourly_forecast;
     //     }).remember();
-};
-
-const model = function(hour$, scale$) {
-    const combine$ = xs.combine(hour$, scale$).remember()
-        .map(([hours, scale]) => {
-            const currentHour = new Date().getHours() + 1;
-            return {hours, scale, currentHour};
-        });
-    return combine$;
 };
 
 const CurrentDisplay = function(sources) {
