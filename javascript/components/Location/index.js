@@ -1,8 +1,6 @@
 import xs from 'xstream';
-import {div, span, input} from '@cycle/dom';
 import isolate from '@cycle/isolate';
-import {isValidZip} from '../../util/zip';
-import _ from 'lodash';
+import view from './view';
 
 const intent = function(DOMSource) {
     const zipTyping$ = DOMSource.select('.js-locationInput').events('keyup')
@@ -53,33 +51,6 @@ const model = function(obj$, props$, autoZip$) {
         zipLegit: zipLegit$,
         editMode: editMode$
     };
-};
-
-const view = function(state$) {
-    return state$.map((state) => {
-        return div('.js-locationContainer Location', [
-            div('.Location--editMode', {style: {display: state.editMode ? 'block' : 'none'}}, [
-                input('.js-locationInput .form-group .form-control .Location-edit', {
-                    attrs: _.omit({
-                        value: state.zipTyping,
-                        autofocus: true,
-                        onfocus: 'this.value = this.value;',
-                        invalid: !isValidZip(state.zipTyping) || void 0
-                    }, _.isUndefined),
-                    class: {
-                        'is-valid': isValidZip(state.zipTyping),
-                        'is-invalid': !isValidZip(state.zipTyping)
-                    }
-                }),
-                span('.js-locationCancelIcon .fa .fa-times-circle-o')
-            ]),
-            div('.Location--displayMode', {style: {display: state.editMode ? 'none' : 'block'}}, [
-                span('.js-locationMarkerIcon .Location-marker .fa .fa-map-marker .hidden-xs-down'),
-                span('.js-locationDisplay .Location-display .js-display', state.validZip),
-                span('.js-locationEditIcon .Location-pencil .fa .fa-pencil .hidden-xs-down')
-            ])
-        ]);
-    });
 };
 
 const LocationInput = function(sources) {

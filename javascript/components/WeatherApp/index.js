@@ -1,14 +1,13 @@
 import xs from 'xstream';
 import _ from 'underscore';
-import {div} from '@cycle/dom';
 import isolate from '@cycle/isolate';
+import view from './view';
 import ScaleDropdown from '../Scale/index';
 import LocationInput from '../Location/index';
 import DaysDisplay from '../DaysDisplay/index';
 import HoursDisplay from '../HoursDisplay/index';
 import CurrentDisplay from '../CurrentDisplay/index';
 import Statistics from '../Statistics/index';
-import getConditionClassName from '../../util/getConditionClassName';
 import parseDays from '../../util/parseDays';
 import parseHours from '../../util/parseHours';
 import parsedPropValues from '../../util/parsedPropValues';
@@ -17,45 +16,6 @@ const model = function(scaleDropdownValue$, locationInputObj$, whichDay$, whichH
     return xs.combine(scaleDropdownValue$, locationInputObj$.combine, whichDay$, whichHour$)
         .map(([scaleState, locationState, whichDay, whichHour]) => {
             return `/${locationState.validZip}/${whichDay}${whichHour == null ? '' : `/${whichHour}`}/${scaleState.scale}`;
-        });
-};
-
-const view = function(state$, scaleDropdownDOM, locationInputDOM, daysDisplayDOM,
-                      hoursDisplayDom, currentDisplayDom, statisticsDOM) {
-    return xs.combine(state$, scaleDropdownDOM, locationInputDOM, daysDisplayDOM,
-                      hoursDisplayDom, currentDisplayDom, statisticsDOM)
-        .map(([state, scaleVTree, locationVTree, daysVTree,
-               hoursVTree, conditionsVTree, statisticsVTree]) => {
-            return div('.weatherApp', {
-                class: {
-                    [getConditionClassName(state.condition)]: true
-                }
-            }, [
-                div('.container-fluid', [
-                    div('.row', [
-                        div('.col-xs-10', [
-                            scaleVTree,
-                            locationVTree
-                        ])
-                    ]),
-                    div('.row', [
-                        div('.col-xs-10', [
-                            conditionsVTree
-                        ])
-                    ]),
-                    div('.row .u-paddingBottom'),
-                    daysVTree,
-                    div('.row .u-paddingBottom'),
-                    div('.row', [
-                        div('.col-xl-3 .col-xl-push-7', [
-                            statisticsVTree
-                        ]),
-                        div('.col-xl-7 .col-xl-pull-3', [
-                            hoursVTree
-                        ])
-                    ])
-                ])
-            ]);
         });
 };
 
@@ -138,7 +98,9 @@ const WeatherApp = function WeatherApp({DOM, HTTP, history}) {
     const state$ = xs.combine(hourWeather$, hoursDisplay.whichHour).remember()
         .map(([hours]) => {
             const currentHour = new Date().getHours() + 1;
+            console.log(currentHour);
             const current = _.find(hours, {hour: currentHour});
+            console.log(current.condition);
             return {condition: current.condition};
         });
     const vtree$ = view(

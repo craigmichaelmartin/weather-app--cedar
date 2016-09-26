@@ -1,8 +1,6 @@
 import xs from 'xstream';
-import _ from 'lodash';
-import {div} from '@cycle/dom';
 import isolate from '@cycle/isolate';
-import {getScaledTemperatureDegreeUnit} from '../../util/temperature';
+import view from './view';
 
 const intent = function({HTTPSource}) {
     return HTTPSource;
@@ -19,16 +17,6 @@ const model = function(hour$, scale$) {
             return {hours, scale, currentHour};
         });
     return combine$;
-};
-
-const view = function(state$) {
-    return state$.map((state) => {
-        const current = _.find(state.hours, {hour: state.currentHour});
-        return div('.CurrentDisplay', [
-            div('.CurrentDisplay-conditions',
-                `${getScaledTemperatureDegreeUnit(state.scale.scale, current.temperature)} ${current.condition}`)
-        ]);
-    });
 };
 
 const CurrentDisplay = function(sources) {
