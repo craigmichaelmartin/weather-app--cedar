@@ -32,7 +32,7 @@ export default (state$) =>
     state$.map((state) => {
         const current = state.whichStatistics === 'day'
             ? _.find(state.days, {day: state.whichDay})
-            : _.find(state.hours, {hour: state.whichHour});
+            : _.find(state.hours, {hour: state.whichHour, day: state.whichDay});
         const attributes = state.whichStatistics === 'day'
             ? dayAttributes
             : hourAttributes;

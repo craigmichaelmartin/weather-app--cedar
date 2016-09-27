@@ -13,14 +13,9 @@ export default (obj$, props$, autoZip$) => {
         initialMode$, obj$.displayClick, obj$.inputBlur, obj$.editIconClick,
         obj$.mapIconClick, obj$.cancelIconClick, obj$.zipFiveLetters
     ).remember();
-    const combine$ = xs.combine(zipTyping$, zipLegit$, editMode$, autoZip$).remember()
+    const state$ = xs.combine(zipTyping$, zipLegit$, editMode$, autoZip$).remember()
         .map(([zipTyping, validZip, editMode, autoZip]) =>
             ({zipTyping: zipTyping || autoZip, validZip: validZip || autoZip, editMode})
         );
-    return {
-        combine: combine$,
-        zipTyping: zipTyping$,
-        zipLegit: zipLegit$,
-        editMode: editMode$
-    };
+    return {state$, zipTyping$, zipLegit$, editMode$};
 };

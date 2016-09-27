@@ -1,11 +1,12 @@
 import xs from 'xstream';
 
 export default (day$, hour$, scale$, whichDay$, whichHour$) => {
-    const whichStats$ = xs.merge(
-        whichHour$.mapTo('hour'), whichDay$.mapTo('day')).remember();
-    return xs.combine(day$, hour$, scale$, whichDay$, whichHour$, whichStats$)
+    const whichStatistics$ = xs.merge(
+        whichHour$.mapTo('hour'), whichDay$.mapTo('day'));
+    return xs.combine(whichHour$, whichStatistics$, whichDay$, day$,
+            hour$, scale$)
         .remember()
-        .map(([days, hours, scale, whichDay, whichHour, whichStats]) =>
-            ({days, hours, scale, whichDay, whichHour, whichStats})
+        .map(([whichHour, whichStatistics, whichDay, days, hours, scale]) =>
+            ({whichHour, whichStatistics, whichDay, days, hours, scale})
         );
 };
