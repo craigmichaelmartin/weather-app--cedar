@@ -9,12 +9,12 @@ const intent = function({DOMSource}) {
 
 const HoursDisplay = function(sources) {
     const change$ = intent({DOMSource: sources.DOM});
-    const {state$, whichHour$} = model(
+    const {state$, whichHour$, isHoursActive$} = model(
         change$, sources.hourWeather, sources.scaleState, sources.props,
         sources.whichDay
     );
     const vtree$ = view(state$);
-    return {DOM: vtree$, whichHour$};
+    return {DOM: vtree$, whichHour$, isHoursActive$};
 };
 
 const IsolatedHoursDisplay = function (sources) {

@@ -5,7 +5,7 @@ import model from './model';
 const Statistics = function(sources) {
     const state$ = model(
         sources.dayWeather, sources.hourWeather, sources.scaleState,
-        sources.whichDay, sources.whichHour
+        sources.whichDay, sources.whichHour, sources.isHoursActive
     );
     const vtree$ = view(state$);
     return {

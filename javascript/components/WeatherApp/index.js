@@ -13,10 +13,11 @@ import parseDays from '../../util/parseDays';
 import parseHours from '../../util/parseHours';
 import parsedPropValues from '../../util/parsedPropValues';
 
-const modelHistory = function(scaleDropdownValue$, locationInputState$, whichDay$, whichHour$) {
-    return xs.combine(scaleDropdownValue$, locationInputState$, whichDay$, whichHour$)
-        .map(([scaleState, locationState, whichDay, whichHour]) =>
-            `/${locationState.validZip}/${whichDay}${whichHour == null ? '' : `/${whichHour}`}/${scaleState.scale}`
+const modelHistory = function(scaleDropdownValue$, locationInputState$,
+        whichDay$, whichHour$, isHoursActive$) {
+    return xs.combine(scaleDropdownValue$, locationInputState$, whichDay$, whichHour$, isHoursActive$)
+        .map(([scaleState, locationState, whichDay, whichHour, isHoursActive]) =>
+            `/${locationState.validZip}/${whichDay}${isHoursActive ? `/${whichHour}` : ''}/${scaleState.scale}`
         );
 };
 
@@ -75,7 +76,8 @@ const WeatherApp = function WeatherApp({DOM, HTTP, history}) {
         dayWeather: dayWeather$,
         scaleState: scaleDropdown.value,
         whichHour: hoursDisplay.whichHour$,
-        whichDay: daysDisplay.whichDay$
+        whichDay: daysDisplay.whichDay$,
+        isHoursActive: hoursDisplay.isHoursActive$
     });
     const state$ = model(hourWeather$, hoursDisplay.whichHour$);
     const vtree$ = view(
@@ -84,7 +86,7 @@ const WeatherApp = function WeatherApp({DOM, HTTP, history}) {
     );
     const history$ = modelHistory(
         scaleDropdown.value, locationInput.state$, daysDisplay.whichDay$,
-        hoursDisplay.whichHour$
+        hoursDisplay.whichHour$, hoursDisplay.isHoursActive$
     );
 
     return {

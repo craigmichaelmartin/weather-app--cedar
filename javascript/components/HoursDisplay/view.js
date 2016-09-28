@@ -16,7 +16,7 @@ export default (state$) =>
             return li('.HoursChart-hour', [
                 span('.HoursChart-bar .js-hour', {
                     class: {
-                        'is-active': state.hoursActive && state.whichHour === hour.hour
+                        'is-active': state.isHoursActive && state.whichHour === hour.hour
                     },
                     style: {
                         height: `${scaledTemp / scaledHighTemp * 100}%`
