@@ -6,7 +6,9 @@ import intent from './intent';
 const LocationInput = function(sources) {
     const changeObj$ = intent(sources.DOM);
     const {state$, zipTyping$, zipLegit$, editMode$} =
-        model(changeObj$, sources.props$, sources.autoZip$);
+        model(
+            changeObj$, sources.props$, sources.autoZip$, sources.weatherBack$
+        );
     const vtree$ = view(state$);
     return {DOM: vtree$, state$, zipTyping$, zipLegit$, editMode$};
 };

@@ -20,6 +20,14 @@
     padding-bottom: 0.4em;
     padding-left: 15px;
 }
+.Location-spinner {
+    color: $secondary;
+    color: $secondary--transparent;
+    font-size: .7em;
+    vertical-align: middle;
+    display: inline-block;
+    padding: 15px;
+}
 .Location-pencil:hover {
     color: white;
     cursor: pointer;

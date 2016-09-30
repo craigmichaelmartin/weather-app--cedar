@@ -22,12 +22,19 @@ const modelHistory = function(scaleDropdownValue$, locationInputState$,
 };
 
 const WeatherApp = function WeatherApp({DOM, HTTP, history}) {
+    const dayWeather$ = HTTP.select('day').flatten()
+        .map((res) =>
+            _.map(res.body.forecast.simpleforecast.forecastday, parseDays)
+        ).remember();
+    const hourWeather$ = HTTP.select('hour').flatten()
+        .map((res) => _.map(res.body.hourly_forecast, parseHours)).remember();
+    const weatherBack$ = xs.merge(dayWeather$, hourWeather$).mapTo(true);
     const autoZip$ = HTTP.select('day').flatten()
         .map((res) => res.body.location && res.body.location.zip)
         .remember().take(1);
     const props$ = history.map((hist) => parsedPropValues(hist.pathname));
     const scaleDropdown = ScaleDropdown({DOM, props$});
-    const locationInput = LocationInput({DOM, props$, autoZip$});
+    const locationInput = LocationInput({DOM, props$, autoZip$, weatherBack$});
     const getDayWeather$ = locationInput.zipLegit$.map((zip) => {
         const end = `${zip ? '' : 'geolookup/'}forecast10day/q/${zip || 'autoip'}.json`;
         const url = `//api.wunderground.com/api/3f6df2a3f0916b99/${end}`;
@@ -47,12 +54,6 @@ const WeatherApp = function WeatherApp({DOM, HTTP, history}) {
         };
     });
     const getWeather$ = xs.merge(getDayWeather$, getHourWeather$);
-    const dayWeather$ = HTTP.select('day').flatten()
-        .map((res) =>
-            _.map(res.body.forecast.simpleforecast.forecastday, parseDays)
-        ).remember();
-    const hourWeather$ = HTTP.select('hour').flatten()
-        .map((res) => _.map(res.body.hourly_forecast, parseHours)).remember();
     const daysDisplay = DaysDisplay({
         dayWeather: dayWeather$,
         DOM,

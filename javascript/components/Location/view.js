@@ -6,6 +6,7 @@ export default (state$) =>
     state$.map((state) =>
         div('.js-locationContainer Location', [
             div('.Location--editMode', {style: {display: state.editMode ? 'block' : 'none'}}, [
+                span('.js-locationMarkerIcon .Location-marker .fa .fa-map-marker .hidden-xs-down'),
                 input('.js-locationInput .form-group .form-control .Location-edit', {
                     attrs: _.omit({
                         value: state.zipTyping,
@@ -23,7 +24,11 @@ export default (state$) =>
             div('.Location--displayMode', {style: {display: state.editMode ? 'none' : 'block'}}, [
                 span('.js-locationMarkerIcon .Location-marker .fa .fa-map-marker .hidden-xs-down'),
                 span('.js-locationDisplay .Location-display .js-display', state.validZip),
-                span('.js-locationEditIcon .Location-pencil .fa .fa-pencil .hidden-xs-down')
+                ...(state.isLoading ? [
+                    span('.Location-spinner .fa .fa-circle-o-notch .fa-spin')
+                ] : [
+                    span('.js-locationEditIcon .Location-pencil .fa .fa-pencil .hidden-xs-down')
+                ])
             ])
         ])
     );
