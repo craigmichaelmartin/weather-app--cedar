@@ -1,4 +1,5 @@
 import xs from 'xstream';
+import dropRepeats from 'xstream/extra/dropRepeats';
 import _ from 'underscore';
 import isolate from '@cycle/isolate';
 import view from './view';
@@ -17,7 +18,7 @@ const modelHistory = function({scale$, zipLegit$, day$, hour$, isHoursActive$}) 
     return xs.combine(scale$, zipLegit$, day$, hour$, isHoursActive$)
         .map(([scale, zipLegit, day, hour, isHoursActive]) =>
             `/${zipLegit}/${day}${isHoursActive ? `/${hour}` : ''}/${scale}`
-        );
+        ).compose(dropRepeats());
 };
 
 const WeatherApp = function WeatherApp({DOM, HTTP, history}) {
