@@ -9,21 +9,21 @@ export default (state$) =>
         const highTemp = _.maxBy(_.map(state.hours, 'temperature'), (t) => +t);
         const scaledHighTemp = getScaledTemperature(state.scale.scale, highTemp);
         const lowTemp = _.minBy(_.map(state.hours, 'temperature'), (t) => +t);
-        return ul('.HoursChart', _.map(_.filter(state.hours, {day: state.whichDay}), (hour) => {
-            const scaledTemp = getScaledTemperature(state.scale.scale, hour.temperature);
-            const presentationTime = getScaledTime(state.scale.scale, hour.hour, {hideMinutes: true});
+        return ul('.HoursChart', _.map(_.filter(state.hours, {day: state.day}), (hourData) => {
+            const scaledTemp = getScaledTemperature(state.scale.scale, hourData.temperature);
+            const presentationTime = getScaledTime(state.scale.scale, hourData.hour, {hideMinutes: true});
             const presentationTemp = `${scaledTemp}°`;
             return li('.HoursChart-hour', [
                 span('.HoursChart-bar .js-hour', {
                     class: {
-                        'is-active': state.isHoursActive && state.whichHour === hour.hour
+                        'is-active': state.isHoursActive && state.hour === hourData.hour
                     },
                     style: {
                         height: `${scaledTemp / scaledHighTemp * 100}%`
                     },
                     attrs: {
                         'data-time': presentationTime,
-                        'data-hour': hour.hour,
+                        'data-hour': hourData.hour,
                         'data-temp': presentationTemp
                     }
                 })

@@ -30,9 +30,9 @@ const hourAttributes = [
 
 export default (state$) =>
     state$.map((state) => {
-        const current = state.isHoursActive && state.whichHour != null
-            ? _.find(state.hours, {hour: state.whichHour, day: state.whichDay})
-            : _.find(state.days, {day: state.whichDay});
+        const current = state.isHoursActive && state.hour != null
+            ? _.find(state.hours, {hour: state.hour, day: state.day})
+            : _.find(state.days, {day: state.day});
         const attributes = state.isHoursActive
             ? hourAttributes
             : dayAttributes;

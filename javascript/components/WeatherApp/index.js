@@ -14,21 +14,21 @@ import parseHours from '../../util/parseHours';
 import parsedPropValues from '../../util/parsedPropValues';
 
 const modelHistory = function(scaleDropdownValue$, locationInputState$,
-        whichDay$, whichHour$, isHoursActive$) {
-    return xs.combine(scaleDropdownValue$, locationInputState$, whichDay$, whichHour$, isHoursActive$)
-        .map(([scaleState, locationState, whichDay, whichHour, isHoursActive]) =>
-            `/${locationState.validZip}/${whichDay}${isHoursActive ? `/${whichHour}` : ''}/${scaleState.scale}`
+        day$, hour$, isHoursActive$) {
+    return xs.combine(scaleDropdownValue$, locationInputState$, day$, hour$, isHoursActive$)
+        .map(([scale, locationState, day, hour, isHoursActive]) =>
+            `/${locationState.validZip}/${day}${isHoursActive ? `/${hour}` : ''}/${scale.scale}`
         );
 };
 
 const WeatherApp = function WeatherApp({DOM, HTTP, history}) {
-    const dayWeather$ = HTTP.select('day').flatten()
+    const days$ = HTTP.select('day').flatten()
         .map((res) =>
             _.map(res.body.forecast.simpleforecast.forecastday, parseDays)
         ).remember();
-    const hourWeather$ = HTTP.select('hour').flatten()
+    const hours$ = HTTP.select('hour').flatten()
         .map((res) => _.map(res.body.hourly_forecast, parseHours)).remember();
-    const weatherBack$ = xs.merge(dayWeather$, hourWeather$).mapTo(true);
+    const weatherBack$ = xs.merge(days$, hours$).mapTo(true);
     const autoZip$ = HTTP.select('day').flatten()
         .map((res) => res.body.location && res.body.location.zip)
         .remember().take(1);
@@ -55,39 +55,39 @@ const WeatherApp = function WeatherApp({DOM, HTTP, history}) {
     });
     const getWeather$ = xs.merge(getDayWeather$, getHourWeather$);
     const daysDisplay = DaysDisplay({
-        dayWeather: dayWeather$,
+        days: days$,
         DOM,
-        scaleState: scaleDropdown.value,
+        scale: scaleDropdown.value,
         props: props$
     });
     const hoursDisplay = HoursDisplay({
-        hourWeather: hourWeather$,
+        hours: hours$,
         DOM,
-        scaleState: scaleDropdown.value,
+        scale: scaleDropdown.value,
         props: props$,
-        whichDay: daysDisplay.whichDay$
+        day: daysDisplay.day$
     });
     const currentDisplay = CurrentDisplay({
-        hourWeather: hourWeather$,
-        scaleState: scaleDropdown.value,
-        whichHour: hoursDisplay.whichHour$
+        hours: hours$,
+        scale: scaleDropdown.value,
+        hour: hoursDisplay.hour$
     });
     const statistics = Statistics({
-        hourWeather: hourWeather$,
-        dayWeather: dayWeather$,
-        scaleState: scaleDropdown.value,
-        whichHour: hoursDisplay.whichHour$,
-        whichDay: daysDisplay.whichDay$,
+        hours: hours$,
+        days: days$,
+        scale: scaleDropdown.value,
+        hour: hoursDisplay.hour$,
+        day: daysDisplay.day$,
         isHoursActive: hoursDisplay.isHoursActive$
     });
-    const state$ = model(hourWeather$, hoursDisplay.whichHour$);
+    const state$ = model(hours$, hoursDisplay.hour$);
     const vtree$ = view(
         state$, scaleDropdown.DOM, locationInput.DOM, daysDisplay.DOM,
         hoursDisplay.DOM, currentDisplay.DOM, statistics.DOM
     );
     const history$ = modelHistory(
-        scaleDropdown.value, locationInput.state$, daysDisplay.whichDay$,
-        hoursDisplay.whichHour$, hoursDisplay.isHoursActive$
+        scaleDropdown.value, locationInput.state$, daysDisplay.day$,
+        hoursDisplay.hour$, hoursDisplay.isHoursActive$
     );
 
     return {

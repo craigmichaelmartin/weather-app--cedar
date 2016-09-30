@@ -3,7 +3,7 @@ import view from './view';
 import model from './model';
 
 const CurrentDisplay = function(sources) {
-    const state$ = model(sources.hourWeather, sources.scaleState);
+    const state$ = model(sources.hours, sources.scale);
     const vtree$ = view(state$);
     return {
         DOM: vtree$

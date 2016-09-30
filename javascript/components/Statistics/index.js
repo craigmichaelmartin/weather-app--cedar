@@ -4,8 +4,8 @@ import model from './model';
 
 const Statistics = function(sources) {
     const state$ = model(
-        sources.dayWeather, sources.hourWeather, sources.scaleState,
-        sources.whichDay, sources.whichHour, sources.isHoursActive
+        sources.days, sources.hours, sources.scale,
+        sources.day, sources.hour, sources.isHoursActive
     );
     const vtree$ = view(state$);
     return {

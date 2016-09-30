@@ -5,11 +5,11 @@ import intent from './intent';
 
 const DaysDisplay = function(sources) {
     const change$ = intent({DOMSource: sources.DOM});
-    const {state$, whichDay$} = model(
-        change$, sources.dayWeather, sources.scaleState, sources.props
+    const {state$, day$} = model(
+        change$, sources.days, sources.scale, sources.props
     );
     const vtree$ = view(state$);
-    return {DOM: vtree$, whichDay$};
+    return {DOM: vtree$, day$};
 };
 
 const IsolatedDaysDisplay = function (sources) {

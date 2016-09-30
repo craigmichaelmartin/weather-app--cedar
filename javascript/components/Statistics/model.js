@@ -1,16 +1,16 @@
 import xs from 'xstream';
 import sampleCombine from 'xstream/extra/sampleCombine';
 
-export default (day$, hour$, scale$, whichDay$, whichHour$, isHoursActive$) => {
-    const bothWhich$ = xs.combine(whichHour$, whichDay$).remember()
-        .map(([whichHour, whichDay]) => ({whichHour, whichDay}));
+export default (days$, hours$, scale$, day$, hour$, isHoursActive$) => {
+    const bothWhich$ = xs.combine(hour$, day$).remember()
+        .map(([hour, day]) => ({hour, day}));
     const whichAndActive$ = bothWhich$.compose(sampleCombine(isHoursActive$))
-        .map(([{whichDay, whichHour}, isHoursActive]) =>
-            ({whichDay, whichHour, isHoursActive})
+        .map(([{day, hour}, isHoursActive]) =>
+            ({day, hour, isHoursActive})
         );
-    return xs.combine(whichAndActive$, day$, hour$, scale$)
+    return xs.combine(whichAndActive$, days$, hours$, scale$)
         .remember()
-        .map(([{whichDay, whichHour, isHoursActive}, days, hours, scale]) =>
-            ({isHoursActive, whichHour, whichDay, days, hours, scale})
+        .map(([{day, hour, isHoursActive}, days, hours, scale]) =>
+            ({isHoursActive, hour, day, days, hours, scale})
         );
 };

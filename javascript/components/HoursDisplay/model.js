@@ -1,17 +1,17 @@
 import xs from 'xstream';
 
-export default (change$, hourWeather, scale$, props$, whichDay$) => {
+export default (change$, hours, scale$, props$, day$) => {
     const initialHour$ = props$.map((props) => props.hour).take(1);
-    const whichHour$ = xs.merge(initialHour$, change$).remember();
+    const hour$ = xs.merge(initialHour$, change$).remember();
     const isHoursActive$ = xs.merge(
-            whichHour$.mapTo(true), whichDay$.mapTo(false),
+            hour$.mapTo(true), day$.mapTo(false),
             initialHour$.map((a) => !!a))
         .remember();
-    const state$ = xs.combine(hourWeather, whichHour$, scale$,
-            whichDay$, isHoursActive$)
+    const state$ = xs.combine(hours, hour$, scale$,
+            day$, isHoursActive$)
         .remember()
-        .map(([hours, whichHour, scale, whichDay, isHoursActive]) =>
-            ({hours, whichHour, scale, whichDay, isHoursActive})
+        .map(([hours, hour, scale, day, isHoursActive]) =>
+            ({hours, hour, scale, day, isHoursActive})
         );
-    return {state$, whichHour$, isHoursActive$};
+    return {state$, hour$, isHoursActive$};
 };
