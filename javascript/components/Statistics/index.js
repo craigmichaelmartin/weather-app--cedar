@@ -2,11 +2,8 @@ import isolate from '@cycle/isolate';
 import view from './view';
 import model from './model';
 
-const Statistics = function(sources) {
-    const state$ = model(
-        sources.days, sources.hours, sources.scale,
-        sources.day, sources.hour, sources.isHoursActive
-    );
+const Statistics = function({days$, hours$, scale$, day$, hour$, isHoursActive$}) {
+    const state$ = model(days$, hours$, scale$, day$, hour$, isHoursActive$);
     const vtree$ = view(state$);
     return {
         DOM: vtree$

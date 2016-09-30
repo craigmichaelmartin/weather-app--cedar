@@ -7,11 +7,11 @@ export default (state$) =>
     state$.map((state) => {
         // Move these to appropriate place (model probs)
         const highTemp = _.maxBy(_.map(state.hours, 'temperature'), (t) => +t);
-        const scaledHighTemp = getScaledTemperature(state.scale.scale, highTemp);
+        const scaledHighTemp = getScaledTemperature(state.scale, highTemp);
         const lowTemp = _.minBy(_.map(state.hours, 'temperature'), (t) => +t);
         return ul('.HoursChart', _.map(_.filter(state.hours, {day: state.day}), (hourData) => {
-            const scaledTemp = getScaledTemperature(state.scale.scale, hourData.temperature);
-            const presentationTime = getScaledTime(state.scale.scale, hourData.hour, {hideMinutes: true});
+            const scaledTemp = getScaledTemperature(state.scale, hourData.temperature);
+            const presentationTime = getScaledTime(state.scale, hourData.hour, {hideMinutes: true});
             const presentationTemp = `${scaledTemp}°`;
             return li('.HoursChart-hour', [
                 span('.HoursChart-bar .js-hour', {

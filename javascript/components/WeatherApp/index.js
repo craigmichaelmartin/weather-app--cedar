@@ -13,11 +13,10 @@ import parseDays from '../../util/parseDays';
 import parseHours from '../../util/parseHours';
 import parsedPropValues from '../../util/parsedPropValues';
 
-const modelHistory = function(scaleDropdownValue$, locationInputState$,
-        day$, hour$, isHoursActive$) {
-    return xs.combine(scaleDropdownValue$, locationInputState$, day$, hour$, isHoursActive$)
-        .map(([scale, locationState, day, hour, isHoursActive]) =>
-            `/${locationState.validZip}/${day}${isHoursActive ? `/${hour}` : ''}/${scale.scale}`
+const modelHistory = function({scale$, zipLegit$, day$, hour$, isHoursActive$}) {
+    return xs.combine(scale$, zipLegit$, day$, hour$, isHoursActive$)
+        .map(([scale, zipLegit, day, hour, isHoursActive]) =>
+            `/${zipLegit}/${day}${isHoursActive ? `/${hour}` : ''}/${scale}`
         );
 };
 
@@ -33,62 +32,33 @@ const WeatherApp = function WeatherApp({DOM, HTTP, history}) {
         .map((res) => res.body.location && res.body.location.zip)
         .remember().take(1);
     const props$ = history.map((hist) => parsedPropValues(hist.pathname));
-    const scaleDropdown = ScaleDropdown({DOM, props$});
-    const locationInput = LocationInput({DOM, props$, autoZip$, weatherBack$});
-    const getDayWeather$ = locationInput.zipLegit$.map((zip) => {
+    const {scale$, DOM: scaleDOM$} = ScaleDropdown({DOM, props$});
+    const {zipLegit$, DOM: locationDOM$} =
+        LocationInput({DOM, props$, autoZip$, weatherBack$});
+    const getDayWeather$ = zipLegit$.map((zip) => {
         const end = `${zip ? '' : 'geolookup/'}forecast10day/q/${zip || 'autoip'}.json`;
         const url = `//api.wunderground.com/api/3f6df2a3f0916b99/${end}`;
-        return {
-            url,
-            category: 'day',
-            method: 'GET'
-        };
+        return {url, category: 'day', method: 'GET'};
     });
-    const getHourWeather$ = locationInput.zipLegit$.map((zip) => {
+    const getHourWeather$ = zipLegit$.map((zip) => {
         const end = `${zip || 'autoip'}.json`;
         const url = `//api.wunderground.com/api/3f6df2a3f0916b99/hourly10day/q/${end}`;
-        return {
-            url,
-            category: 'hour',
-            method: 'GET'
-        };
+        return {url, category: 'hour', method: 'GET'};
     });
     const getWeather$ = xs.merge(getDayWeather$, getHourWeather$);
-    const daysDisplay = DaysDisplay({
-        days: days$,
-        DOM,
-        scale: scaleDropdown.value,
-        props: props$
-    });
-    const hoursDisplay = HoursDisplay({
-        hours: hours$,
-        DOM,
-        scale: scaleDropdown.value,
-        props: props$,
-        day: daysDisplay.day$
-    });
-    const currentDisplay = CurrentDisplay({
-        hours: hours$,
-        scale: scaleDropdown.value,
-        hour: hoursDisplay.hour$
-    });
-    const statistics = Statistics({
-        hours: hours$,
-        days: days$,
-        scale: scaleDropdown.value,
-        hour: hoursDisplay.hour$,
-        day: daysDisplay.day$,
-        isHoursActive: hoursDisplay.isHoursActive$
-    });
-    const state$ = model(hours$, hoursDisplay.hour$);
+    const {day$, DOM: daysDOM$} = DaysDisplay({DOM, props$, days$, scale$});
+    const {hour$, isHoursActive$, DOM: hoursDOM$} =
+        HoursDisplay({DOM, props$, hours$, scale$, day$});
+    const {DOM: currentDOM$} = CurrentDisplay({hours$, scale$});
+    const {DOM: statisticsDOM$} =
+        Statistics({hours$, days$, scale$, hour$, day$, isHoursActive$});
+    const state$ = model(hours$, hour$);
     const vtree$ = view(
-        state$, scaleDropdown.DOM, locationInput.DOM, daysDisplay.DOM,
-        hoursDisplay.DOM, currentDisplay.DOM, statistics.DOM
+        state$, scaleDOM$, locationDOM$, daysDOM$,
+        hoursDOM$, currentDOM$, statisticsDOM$
     );
-    const history$ = modelHistory(
-        scaleDropdown.value, locationInput.state$, daysDisplay.day$,
-        hoursDisplay.hour$, hoursDisplay.isHoursActive$
-    );
+    const history$ =
+        modelHistory({scale$, zipLegit$, day$, hour$, isHoursActive$});
 
     return {
         DOM: vtree$,

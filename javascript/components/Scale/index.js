@@ -5,11 +5,11 @@ import intent from './intent';
 
 const ScaleDropdown = function(sources) {
     const change$ = intent(sources.DOM);
-    const state$ = model(change$, sources.props$);
+    const {state$, scale$} = model(change$, sources.props$);
     const vtree$ = view(sources.props$, state$);
     return {
         DOM: vtree$,
-        value: state$
+        scale$
     };
 };
 

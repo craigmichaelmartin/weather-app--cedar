@@ -7,6 +7,6 @@ export default (state$) =>
         const current = _.find(state.hours, {hour: state.currentHour});
         return div('.CurrentDisplay', [
             div('.CurrentDisplay-conditions',
-                `${getScaledTemperatureDegreeUnit(state.scale.scale, current.temperature)} ${current.condition}`)
+                `${getScaledTemperatureDegreeUnit(state.scale, current.temperature)} ${current.condition}`)
         ]);
     });

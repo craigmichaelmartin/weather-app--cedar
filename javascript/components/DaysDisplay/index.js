@@ -3,10 +3,10 @@ import view from './view';
 import model from './model';
 import intent from './intent';
 
-const DaysDisplay = function(sources) {
-    const change$ = intent({DOMSource: sources.DOM});
+const DaysDisplay = function({DOM, days$, scale$, props$}) {
+    const change$ = intent({DOMSource: DOM});
     const {state$, day$} = model(
-        change$, sources.days, sources.scale, sources.props
+        change$, days$, scale$, props$
     );
     const vtree$ = view(state$);
     return {DOM: vtree$, day$};

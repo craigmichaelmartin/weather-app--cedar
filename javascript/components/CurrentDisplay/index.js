@@ -2,8 +2,8 @@ import isolate from '@cycle/isolate';
 import view from './view';
 import model from './model';
 
-const CurrentDisplay = function(sources) {
-    const state$ = model(sources.hours, sources.scale);
+const CurrentDisplay = function({hours$, scale$}) {
+    const state$ = model(hours$, scale$);
     const vtree$ = view(state$);
     return {
         DOM: vtree$

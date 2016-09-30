@@ -22,12 +22,12 @@ export default (state$) =>
                     ]),
                     div('.col-md-5 .col-xs-2', [
                         span('.Day-temperature .Day-temperature--high .js-dayHighTemperature',
-                            getScaledTemperatureDegree(state.scale.scale, dayData.high)
+                            getScaledTemperatureDegree(state.scale, dayData.high)
                         )
                     ]),
                     div('.col-md-5 .col-xs-2', [
                         span('.Day-temperature .day-temperature--low .js-dayLowTemperature',
-                            getScaledTemperatureDegree(state.scale.scale, dayData.low)
+                            getScaledTemperatureDegree(state.scale, dayData.low)
                         )
                     ])
                 ])

@@ -7,12 +7,10 @@ const intent = function({DOMSource}) {
         .map((ev) => +ev.currentTarget.dataset.hour);
 };
 
-const HoursDisplay = function(sources) {
-    const change$ = intent({DOMSource: sources.DOM});
-    const {state$, hour$, isHoursActive$} = model(
-        change$, sources.hours, sources.scale, sources.props,
-        sources.day
-    );
+const HoursDisplay = function({DOM, hours$, scale$, props$, day$}) {
+    const change$ = intent({DOMSource: DOM});
+    const {state$, hour$, isHoursActive$} =
+        model(change$, hours$, scale$, props$, day$);
     const vtree$ = view(state$);
     return {DOM: vtree$, hour$, isHoursActive$};
 };

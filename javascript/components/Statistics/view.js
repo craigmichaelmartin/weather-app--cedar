@@ -39,7 +39,7 @@ export default (state$) =>
         return div('.Statistics', [
             div('.row', [
                 div('.col-xs-10 .Statistics-header',
-                    `${getDateSentence(state.scale.scale, current.weekday, current.monthname, current.day, current.hour)}`
+                    `${getDateSentence(state.scale, current.weekday, current.monthname, current.day, current.hour)}`
                 )
             ]),
             ... _.map(attributes, (attr) => {
@@ -49,7 +49,7 @@ export default (state$) =>
                     ]),
                     div('.col-xs-5', [
                         span(`${attr.transform
-                            ? attr.transform(state.scale.scale, current[attr.name])
+                            ? attr.transform(state.scale, current[attr.name])
                             : current[attr.name]}`)
                     ])
                 ]);
