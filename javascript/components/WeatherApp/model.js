@@ -1,5 +1,5 @@
 import xs from 'xstream';
-import _ from 'underscore';
+import _ from 'lodash';
 
 export default (hours$, hour$) =>
     xs.combine(hours$, hour$).remember()

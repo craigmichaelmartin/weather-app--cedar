@@ -1,8 +1,8 @@
-import _ from 'underscore';
+import _ from 'lodash';
 
 // Return raw http body mapped to desired hours object
 export default (results) =>
-    _.mapObject({
+    _.mapValues({
         monthname: results.FCTTIME.month_name,
         weekday: results.FCTTIME.weekday_name,
         weekdayShort: results.FCTTIME.weekday_name_abbrev,
@@ -19,9 +19,4 @@ export default (results) =>
         windDirection: results.wdir.dir,
         windSpeed: results.wspd.english,
         precipitation: results.qpf.english
-    }, (val) => {
-        if (val === '-9999' || val === '-999') {
-            return void 0;
-        }
-        return val;
-    });
+    }, (val) => val === '-9999' || val === '-999' ? void 0 : val);

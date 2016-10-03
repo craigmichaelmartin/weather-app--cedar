@@ -1,6 +1,6 @@
 import xs from 'xstream';
 import dropRepeats from 'xstream/extra/dropRepeats';
-import _ from 'underscore';
+import _ from 'lodash';
 import isolate from '@cycle/isolate';
 import view from './view';
 import model from './model';

@@ -1,8 +1,8 @@
-import _ from 'underscore';
+import _ from 'lodash';
 
 // Return raw http body mapped to desired days object
 export default (results) =>
-    _.mapObject({
+    _.mapValues({
         condition: results.conditions,
         iconUrl: results.icon_url,
         iconAlt: results.icon,
@@ -17,9 +17,4 @@ export default (results) =>
         averageWindDirection: results.avewind.dir,
         averageWind: results.avewind.mph,
         precipitation: results.qpf_allday.in
-    }, (val) => {
-        if (val === '-9999' || val === '-999') {
-            return void 0;
-        }
-        return val;
-    });
+    }, (val) => val === '-9999' || val === '-999' ? void 0 : val);
