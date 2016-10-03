@@ -3,18 +3,13 @@ import view from './view';
 import model from './model';
 import intent from './intent';
 
-const ScaleDropdown = function(sources) {
-    const change$ = intent(sources.DOM);
-    const {state$, scale$} = model(change$, sources.props$);
-    const vtree$ = view(sources.props$, state$);
-    return {
-        DOM: vtree$,
-        scale$
-    };
+const ScaleDropdown = ({DOM, props$}) => {
+    const change$ = intent(DOM);
+    const {state$, scale$} = model({change$, props$});
+    const vtree$ = view(state$);
+    return {DOM: vtree$, scale$};
 };
 
-const IsolatedScaleDropdown = function (sources) {
-    return isolate(ScaleDropdown)(sources);
-};
+const IsolatedScaleDropdown = (sources) => isolate(ScaleDropdown)(sources);
 
 export default IsolatedScaleDropdown;

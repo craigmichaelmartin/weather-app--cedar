@@ -3,18 +3,14 @@ import view from './view';
 import model from './model';
 import intent from './intent';
 
-const LocationInput = function(sources) {
-    const changeObj$ = intent(sources.DOM);
+const LocationInput = ({DOM, props$, autoZip$, weatherBack$}) => {
+    const changeObj$ = intent(DOM);
     const {state$, zipTyping$, zipLegit$, editMode$} =
-        model(
-            changeObj$, sources.props$, sources.autoZip$, sources.weatherBack$
-        );
+        model({changeObj$, props$, autoZip$, weatherBack$});
     const vtree$ = view(state$);
     return {DOM: vtree$, state$, zipTyping$, zipLegit$, editMode$};
 };
 
-const IsolatedLocationInput = function (sources) {
-    return isolate(LocationInput)(sources);
-};
+const IsolatedLocationInput = (sources) => isolate(LocationInput)(sources);
 
 export default IsolatedLocationInput;

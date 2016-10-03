@@ -1,7 +1,7 @@
 import xs from 'xstream';
 import sampleCombine from 'xstream/extra/sampleCombine';
 
-export default (days$, hours$, scale$, day$, hour$, isHoursActive$) => {
+export default ({days$, hours$, scale$, day$, hour$, isHoursActive$}) => {
     const bothWhich$ = xs.combine(hour$, day$).remember()
         .map(([hour, day]) => ({hour, day}));
     const whichAndActive$ = bothWhich$.compose(sampleCombine(isHoursActive$))

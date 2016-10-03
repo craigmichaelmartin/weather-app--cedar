@@ -1,7 +1,7 @@
 import xs from 'xstream';
 import dropRepeats from 'xstream/extra/dropRepeats';
 
-export default (obj$, props$, autoZip$, weatherBack$) => {
+export default ({changeObj$: obj$, props$, autoZip$, weatherBack$}) => {
     // Could I just use startWith and pass the value, instead of creating a
     // one value stream to pass in, mapping it, and taking the single value?
     const initialZipTyping$ = props$.map((props) => props.zip).take(1);

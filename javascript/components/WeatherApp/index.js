@@ -14,14 +14,13 @@ import parseDays from '../../util/parseDays';
 import parseHours from '../../util/parseHours';
 import parsedPropValues from '../../util/parsedPropValues';
 
-const modelHistory = function({scale$, zipLegit$, day$, hour$, isHoursActive$}) {
-    return xs.combine(scale$, zipLegit$, day$, hour$, isHoursActive$)
+const modelHistory = ({scale$, zipLegit$, day$, hour$, isHoursActive$}) =>
+    xs.combine(scale$, zipLegit$, day$, hour$, isHoursActive$)
         .map(([scale, zipLegit, day, hour, isHoursActive]) =>
             `/${zipLegit}/${day}${isHoursActive ? `/${hour}` : ''}/${scale}`
         ).compose(dropRepeats());
-};
 
-const WeatherApp = function WeatherApp({DOM, HTTP, history}) {
+const WeatherApp = ({DOM, HTTP, history}) => {
     const days$ = HTTP.select('day').flatten()
         .map((res) =>
             _.map(res.body.forecast.simpleforecast.forecastday, parseDays)
@@ -53,7 +52,7 @@ const WeatherApp = function WeatherApp({DOM, HTTP, history}) {
     const {DOM: currentDOM$} = CurrentDisplay({hours$, scale$});
     const {DOM: statisticsDOM$} =
         Statistics({hours$, days$, scale$, hour$, day$, isHoursActive$});
-    const state$ = model(hours$, hour$);
+    const state$ = model({hours$, hour$});
     const vtree$ = view(
         state$, scaleDOM$, locationDOM$, daysDOM$,
         hoursDOM$, currentDOM$, statisticsDOM$
@@ -68,8 +67,6 @@ const WeatherApp = function WeatherApp({DOM, HTTP, history}) {
     };
 };
 
-const IsolatedWeatherApp = function (sources) {
-    return isolate(WeatherApp)(sources);
-};
+const IsolatedWeatherApp = (sources) => isolate(WeatherApp)(sources);
 
 export default IsolatedWeatherApp;

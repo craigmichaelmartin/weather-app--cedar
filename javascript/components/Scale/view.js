@@ -1,8 +1,7 @@
-import xs from 'xstream';
 import {div, label, span} from '@cycle/dom';
 
-export default (props$, state$) =>
-    xs.combine(props$, state$).map(([props, state]) =>
+export default (state$) =>
+    state$.map((state) =>
         div('.Scales .btn-group', [
             label('.Scales-item .btn .btn-primary .js-scale', {
                 attrs: {

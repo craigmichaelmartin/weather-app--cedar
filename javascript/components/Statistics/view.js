@@ -42,8 +42,8 @@ export default (state$) =>
                     `${getDateSentence(state.scale, current.weekday, current.monthname, current.day, current.hour)}`
                 )
             ]),
-            ... _.map(attributes, (attr) => {
-                return div('.row', [
+            ... _.map(attributes, (attr) =>
+                div('.row', [
                     div('.col-xs-5', [
                         span(attr.label)
                     ]),
@@ -52,7 +52,7 @@ export default (state$) =>
                             ? attr.transform(state.scale, current[attr.name])
                             : current[attr.name]}`)
                     ])
-                ]);
-            })
+                ])
+            )
         ]);
     });

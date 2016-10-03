@@ -1,7 +1,7 @@
 import xs from 'xstream';
 import _ from 'lodash';
 
-export default (hours$, hour$) =>
+export default ({hours$, hour$}) =>
     xs.combine(hours$, hour$).remember()
         .map(([hours]) => {
             const currentHour = new Date().getHours() + 1;
