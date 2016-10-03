@@ -16,6 +16,7 @@ import parsedPropValues from '../../util/parsedPropValues';
 
 const modelHistory = ({scale$, zipLegit$, day$, hour$, isHoursActive$}) =>
     xs.combine(scale$, zipLegit$, day$, hour$, isHoursActive$)
+        .filter(([, zip]) => !!zip)
         .map(([scale, zipLegit, day, hour, isHoursActive]) =>
             `/${zipLegit}/${day}${isHoursActive ? `/${hour}` : ''}/${scale}`
         ).compose(dropRepeats());
