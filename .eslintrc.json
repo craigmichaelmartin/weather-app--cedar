@@ -149,7 +149,7 @@
         "linebreak-style": [2, "unix"],
         "lines-around-comment": 0,
         "max-depth": [1, 4],
-        "max-len": [1, {"code": 90, "tabWidth": 2, "ignoreUrls": true, "ignoreComments": true}],
+        "max-len": [1, {"code": 80, "tabWidth": 2, "ignoreUrls": true, "ignoreComments": true}],
         "max-nested-callbacks": [1, 3],
         "max-params": [1, 4],
         "max-statements": [1, 12],
