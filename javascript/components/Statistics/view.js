@@ -11,8 +11,7 @@ const dayAttributes = [
     {label: 'High', name: 'high', transform: getScaledTemperatureDegreeUnit},
     {label: 'Snowfall', name: 'totalSnow', transform: getScaledLength},
     {label: 'Humidity', name: 'averageHumidity', transform: getScaledTemperatureDegreeUnit},
-    // {label: 'wind', name: ['windSpeed', 'windDirection']},
-    {label: 'wind', name: 'averageWind', transform: getScaledTemperatureDegreeUnit},
+    {label: 'Wind', name: ['averageWind', 'averageWindDirection'], transform: getScaledSpeedUnit},
     {label: 'Precipitation', name: 'precipitation', transform: getScaledLength}
 ];
 
@@ -22,11 +21,19 @@ const hourAttributes = [
     {label: 'Feels like', name: 'feelsLike', transform: getScaledTemperatureDegreeUnit},
     {label: 'Humidity', name: 'humidity', transform: getScaledTemperatureDegreeUnit},
     {label: 'Dew Point', name: 'dewpoint', transform: getScaledTemperatureDegreeUnit},
-    // {label: 'wind', name: ['windSpeed', 'windDirection']},
-    {label: 'wind', name: 'windSpeed'},
+    {label: 'Wind', name: ['windSpeed', 'windDirection'], transform: getScaledSpeedUnit},
     {label: 'Precipitation', name: 'precipitation', transform: getScaledLength},
     {label: 'Heat Index', name: 'heatIndex', transform: getScaledTemperatureDegreeUnit}
 ];
+
+const getDescription = (scale, transform, name, hour) => {
+    const transforms = _.isArray(transform) ? transform : [transform];
+    const names = _.isArray(name) ? name : [name];
+    return names.reduce((desc, n, index) => {
+        const t = transforms[index];
+        return `${desc} ${_.isFunction(t) ? t(scale, hour[n]) : hour[n]}`;
+    }, '');
+};
 
 export default (state$) =>
     state$.map((state) => {
@@ -48,9 +55,7 @@ export default (state$) =>
                         span(attr.label)
                     ]),
                     div('.col-xs-5', [
-                        span(`${attr.transform
-                            ? attr.transform(state.scale, current[attr.name])
-                            : current[attr.name]}`)
+                        span(`${getDescription(state.scale, attr.transform, attr.name, current)}`)
                     ])
                 ])
             )
