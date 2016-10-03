@@ -16,6 +16,14 @@ and npm scripts for tasks involving
 ESLint, Uglify, Autoprefixer, CSScomb,  
 CSSLint, CSSMin, Clean-css, Http-server, and more.
 
+#### Outstanding TODOs:
+
+- [ ] implement tests (all the tests for the all the cases exist, but they were ported directly from weather-app--birch and have not been touch, so they need to be updated)
+- [ ] allow chart to handle negative values
+- [ ] implement error messaging for invalid input (from url)
+- [ ] clean up left over css from birch (and perhaps try a radically different methodology - though I love the BEM derivative SUIT)
+- [ ] hook up to ci
+
 #### Build Locally
 
 [Clone](http://git-scm.com/docs/git-clone) or [download](https://github.com/craigmichaelmartin/weather-app--cedar/archive/master.zip) this repo.
