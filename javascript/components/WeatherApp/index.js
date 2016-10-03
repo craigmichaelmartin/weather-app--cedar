@@ -30,7 +30,7 @@ const WeatherApp = ({DOM, HTTP, history}) => {
     const weatherBack$ = xs.merge(days$, hours$).mapTo(true);
     const autoZip$ = HTTP.select('day').flatten()
         .map((res) => res.body.location && res.body.location.zip)
-        .remember().take(1);
+        .remember().take(1).filter((a) => !!a);
     const props$ = history.map((hist) => parsedPropValues(hist.pathname));
     const {scale$, DOM: scaleDOM$} = ScaleDropdown({DOM, props$});
     const {zipLegit$, DOM: locationDOM$} =
